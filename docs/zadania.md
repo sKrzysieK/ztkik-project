@@ -106,7 +106,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K15 · Atak 3: niedeterminizm szyfrowania (opc.)** — `src/attacks/nondeterminism.py` — zależy od: K07
   - Zrobić: ta sama wiadomość szyfrowana N razy → wszystkie szyfrogramy różne; dla kontrastu „deterministyczny” wariant (stałe `r`) → identyczne szyfrogramy, więc analiza częstości jest możliwa.
   - Gotowe gdy: skrypt wypisuje liczbę unikalnych szyfrogramów w obu wariantach.
-- [ ] **K16 · Atak 4: funkcja wycieku przez `exponent`** — `src/attacks/exponent_leak.py` — zależy od: K07
+- [x] **K16 · Atak 4: funkcja wycieku przez `exponent`** — `src/attacks/exponent_leak.py` — zależy od: K07
   - Zrobić: `exponent_leak(pub, X, encoding)` dla `encoding ∈ {"float", "fixed"}` → odsetek wiadomości, w których serwer odczytuje z wykładnika co najmniej jedną pozycję niezerową, oraz odsetek odczytanych pozycji. Rozwijać na danych syntetycznych.
   - Gotowe gdy: test: dla `"fixed"` wyciek = 0; dla `"float"` wyciek > 0 na danych zawierających np. 0.03 lub 1.0.
 
