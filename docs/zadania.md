@@ -67,7 +67,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [ ] **K03 · `requirements.txt`** — zależy od: K01
   - Zrobić: przypięte wersje `phe`, `gmpy2`, `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `pytest`.
   - Gotowe gdy: instalacja w czystym `.venv` przechodzi, a szyfrowanie kluczem 2048 bit trwa kilka ms (≈ 4 ms; ≈ 60 ms oznacza, że `phe` nie używa `gmpy2`).
-- [ ] **K04 · `src/config.py`** — zależy od: K02
+- [x] **K04 · `src/config.py`** — zależy od: K02
   - Zrobić: stałe z kontraktu; katalogi wyników tworzone przy imporcie, jeśli nie istnieją.
   - Gotowe gdy: inne moduły importują stałe z `src.config`, a nie definiują własnych.
 
