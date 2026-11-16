@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from src.crypto_client import encrypt_vectors, generate_keys
+from src.config import SCALE
+from src.crypto_client import decrypt_predict, encrypt_vectors, generate_keys
 from src.fixed_point import encode_features
 
 TEST_KEY_BITS = 512
@@ -83,3 +84,23 @@ def test_encrypt_vectors_rejects_non_positive_workers(keypair, sparse_X):
 
     with pytest.raises(ValueError):
         encrypt_vectors(pub, sparse_X, workers=0)
+
+
+def test_decrypt_predict_decodes_scores_and_predicts_by_sign(keypair):
+    pub, priv = keypair
+    raw = [-5, 0, 3 * SCALE**2 // 2, -2 * SCALE**2]
+
+    y_pred, scores, decrypted = decrypt_predict(priv, [pub.encrypt(d) for d in raw])
+
+    assert decrypted == raw
+    assert all(type(d) is int for d in decrypted)
+    assert y_pred.tolist() == [0, 0, 1, 0]  # Δ = 0 to ham: spam tylko dla Δ > 0
+    assert scores.dtype == np.float64
+    assert scores.tolist() == [-5 / SCALE**2, 0.0, 1.5, -2.0]
+
+
+def test_decrypt_predict_rejects_non_fixed_point_scores(keypair):
+    pub, priv = keypair
+
+    with pytest.raises(ValueError):
+        decrypt_predict(priv, [pub.encrypt(0.5)])

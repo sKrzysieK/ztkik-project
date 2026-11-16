@@ -87,7 +87,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K09 · Obliczenie serwera** — `server_score` w `src/crypto_server.py` — zależy od: K05, K07
   - Zrobić: `encode_weights`, potem `Σ Enc(x_i) * w_int_i + b_int`. Moduł nie importuje niczego z klucza prywatnego.
   - Gotowe gdy: test: wynik ma `exponent == 0`.
-- [ ] **K10 · Odszyfrowanie i predykcja** — `decrypt_predict` — zależy od: K09
+- [x] **K10 · Odszyfrowanie i predykcja** — `decrypt_predict` — zależy od: K09
   - Gotowe gdy: test: `y_pred == (scores > 0)`; zwracane surowe `int` gotowe do porównania `==`.
 - [ ] **K11 · Test integracyjny `enc == plain`** — `tests/test_crypto_e2e.py` — zależy od: K10
   - Zrobić: losowe `X` (20 × 50, rzadkie, wartości jak TF-IDF), losowe `b`, `w`; pełny przebieg K07 → K09 → K10.
