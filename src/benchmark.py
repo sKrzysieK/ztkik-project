@@ -3,13 +3,18 @@
 Dane są syntetyczne (jak TF-IDF z SMS-ów), bo koszt nie zależy od treści wiadomości,
 tylko od długości klucza i liczby cech k.
 
-Uruchomienie: `python -m src.benchmark --key-bits 1024 --k 100 --n 5`
+Uruchomienie:
+- jeden pomiar: `python -m src.benchmark --key-bits 1024 --k 100 --n 5`
+- siatka do raportu: `python -m src.benchmark --key-bits 1024 2048 --k 500 750 1000 --n 10 --out results/benchmark.csv`
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
+import itertools
 import time
+from pathlib import Path
 
 import numpy as np
 
@@ -68,17 +73,38 @@ def measure(key_bits: int, k: int, n_messages: int, workers: int = 1) -> dict[st
     }
 
 
+def write_csv(results: list[dict[str, float | int]], path: Path) -> None:
+    """Zapisuje wyniki do CSV; czasy zaokrąglone do 0,01 ms."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(results[0]))
+        writer.writeheader()
+        for row in results:
+            writer.writerow({k: round(v, 2) if isinstance(v, float) else v for k, v in row.items()})
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--key-bits", type=int, default=1024)
-    parser.add_argument("--k", type=int, default=100)
-    parser.add_argument("--n", type=int, default=5, help="liczba wiadomości")
+    parser.add_argument("--key-bits", type=int, nargs="+", default=[1024])
+    parser.add_argument("--k", type=int, nargs="+", default=[100])
+    parser.add_argument("--n", type=int, default=5, help="liczba wiadomości na pomiar")
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--out", type=Path, help="zapisz wyniki do pliku CSV")
     args = parser.parse_args()
 
-    result = measure(args.key_bits, args.k, args.n, workers=args.workers)
-    for name, value in result.items():
-        print(f"{name:>12}: {value:.2f}" if isinstance(value, float) else f"{name:>12}: {value}")
+    results = []
+    for bits, k in itertools.product(args.key_bits, args.k):
+        result = measure(bits, k, args.n, workers=args.workers)
+        results.append(result)
+        print(
+            f"key_bits={bits:>4} k={k:>4}: enc {result['t_enc_ms']:9.2f} ms, "
+            f"server {result['t_server_ms']:7.2f} ms, dec {result['t_dec_ms']:5.2f} ms, "
+            f"ct {result['ct_bytes']} B",
+            flush=True,
+        )
+    if args.out:
+        write_csv(results, args.out)
+        print(f"zapisano {args.out}")
 
 
 if __name__ == "__main__":

@@ -98,7 +98,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K12 · Funkcja benchmarku** — `src/benchmark.py` — zależy od: K10
   - Zrobić: `measure(key_bits, k, n_messages)` na syntetycznych danych → czas szyfrowania, serwera i odszyfrowania na wiadomość, rozmiar szyfrogramu w bajtach.
   - Gotowe gdy: zwraca słownik; `python -m src.benchmark --key-bits 1024 --k 100 --n 5` wypisuje wynik.
-- [ ] **K13 · Przebiegi benchmarku** — zależy od: K12
+- [x] **K13 · Przebiegi benchmarku** — zależy od: K12
   - Zrobić: klucze 1024 i 2048 bit × k ∈ {500, 750, 1000}, uśrednienie z kilku wiadomości.
   - Gotowe gdy: `results/benchmark.csv` z kolumnami `key_bits, k, t_enc_ms, t_server_ms, t_dec_ms, ct_bytes` (CSV commitujemy, to mały wynik końcowy).
 - [ ] **K14 · Benchmark 3072 bit (opc.)** — zależy od: K13
