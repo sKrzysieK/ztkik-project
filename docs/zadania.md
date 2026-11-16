@@ -84,7 +84,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K08 · Szyfrowanie równoległe** — `encrypt_vectors` z `workers > 1` — zależy od: K07
   - Zrobić: `multiprocessing.Pool` po wierszach; na macOS jest `spawn`, więc funkcja robocza na poziomie modułu, a uruchomienie pod `if __name__ == "__main__"`.
   - Gotowe gdy: test: odszyfrowane wyniki identyczne dla `workers=1` i `workers=4`; pomiar przyspieszenia wpisany w opis PR.
-- [ ] **K09 · Obliczenie serwera** — `server_score` w `src/crypto_server.py` — zależy od: K05, K07
+- [x] **K09 · Obliczenie serwera** — `server_score` w `src/crypto_server.py` — zależy od: K05, K07
   - Zrobić: `encode_weights`, potem `Σ Enc(x_i) * w_int_i + b_int`. Moduł nie importuje niczego z klucza prywatnego.
   - Gotowe gdy: test: wynik ma `exponent == 0`.
 - [ ] **K10 · Odszyfrowanie i predykcja** — `decrypt_predict` — zależy od: K09
