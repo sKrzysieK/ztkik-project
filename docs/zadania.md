@@ -227,8 +227,38 @@ Krzysztof: 25 zadań (2 opc.), Piotr: 24 zadania (1 opc.).
 
 ## Przekazania
 
-Przy każdym przekazaniu dopisz: data, kto → komu, co skończone, co nie działa / na co uważać.
+Przy każdym przekazaniu dopisz wiersz w tabeli (data, kto → komu, co skończone) i podsekcję z tym, na co uważać.
 
 | Data | Kto → komu | Notatka |
 | --- | --- | --- |
-| | | |
+| 2026-11-16 | Krzysztof → Piotr | Runda 1 skończona: K01–K20, łącznie z opcjonalnymi K14 i K15. Szczegóły [niżej](#2026-11-16--krzysztof--piotr). |
+
+### 2026-11-16 · Krzysztof → Piotr
+
+**Start**
+- `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` (testowane na Pythonie 3.14). Sprawdź, że `phe` widzi `gmpy2`: `.venv/bin/python -c "import phe.util; print(phe.util.HAVE_GMP)"` musi wypisać `True` (bez `gmpy2` szyfrowanie jest ok. 13× wolniejsze).
+- Testy: `.venv/bin/python -m pytest` (klucze 512 bit, całość < 1 s).
+
+**Kryptografia z perspektywy twoich zadań (P09, P10, P16)**
+- Do `encrypt_vectors` podajesz zwykłe `X` z `features()` (`np.ndarray`, float). Kodowanie do `int` jest w środku — nie szyfruj niczego sam przez `pub.encrypt(float)`, bo wtedy wraca wyciek przez wykładnik (atak 4) i znika dokładność `==`.
+- `server_score(enc_X, b, w)` bierze `b`, `w` jako floaty prosto z `log_odds_weights()`; skalowanie robi sam.
+- `decrypt_predict` zwraca trzy rzeczy: `y_pred`, `scores` (log-odds jako float, do ROC-AUC i `delta_enc`) i surowe `int`. `exact_int_match` w P09 to porównanie tych `int` z `plain_int_scores(encode_features(X), *encode_weights(b, w))`.
+- Spam ⇔ Δ > 0, więc `log_odds_weights` musi liczyć `b`, `w` jako spam − ham (indeks 1 − indeks 0 w `class_log_prior_` / `feature_log_prob_`; przy etykietach 0/1 `MultinomialNB` trzyma klasy w tej kolejności).
+- `encrypt_vectors(..., workers=None)` używa wszystkich rdzeni przez `multiprocessing` w trybie `spawn`. Skrypt, który to woła (`src/pipeline.py`), musi mieć kod startowy pod `if __name__ == "__main__":`, inaczej procesy potomne uruchomią go od nowa. Do szybkich testów `workers=1`.
+- Czas: pełny zbiór testowy przy kluczu 2048 bit i k = 1000 to ok. 80 min na 1 rdzeniu, ok. 9 min na 14 procesach. Do iteracji `--limit` i klucz 1024 bit (ok. 7,5× szybciej).
+- P16 (atak 1): szyfrogram jako liczbę daje `c.ciphertext(be_secure=False)`; `c.exponent` jest zawsze 0, więc nie jest cechą. Przy k = 500 kilkaset wiadomości szyfruje się w ok. minutę na wszystkich rdzeniach.
+
+**Wyniki i ataki, z których korzystasz**
+- P15: czasy na wiadomość są w `results/benchmark.csv` (1 rdzeń, klucze 1024 / 2048 / 3072, k = 500 / 750 / 1000); czas całkowity to `t_enc_ms + t_server_ms + t_dec_ms`. Odtworzenie: polecenia w docstringu `src/benchmark.py`.
+- P18 (`run_all`): atak 3 to `src.attacks.nondeterminism.run()`, zwraca słownik z wynikami. Atak 4 dopiszę sam w K21.
+- Atak 4 na danych syntetycznych pokazuje ok. 90% wiadomości z wyciekiem — to zawyżone przez dane syntetyczne, nie wpisuj tego do raportu. Prawdziwą liczbę policzę w K21 na cechach z P06.
+
+**Raport**
+- Po angielsku, IEEEtran (`report/`). Każda sekcja w osobnym pliku `report/sections/*.tex`, w komentarzu na górze jest ID zadania. Budowanie: `cd report && latexmk main.tex`.
+- Wykresy zapisuj do `results/figures/` (PDF) — raport bierze je stamtąd (`\graphicspath`), więc w `.tex` wystarczy `\includegraphics{roc}`.
+- `report/main.pdf` nie jest w `.gitignore` — nie commitujemy go.
+- Background, Threat Model i System Design są napisane; odwołuj się do nich przez `\cref{sec:background}`, `\cref{sec:threat-model}`, `\cref{sec:system-design}`, a do równania log-odds przez `\cref{eq:log-odds}`.
+
+**Na co czekam od ciebie (runda 3)**
+- K21 (atak 4 na prawdziwych danych) potrzebuje P06 (`features`, `log_odds_weights`).
+- K22–K24 potrzebują twoich sekcji raportu i wyników (P21–P23).
