@@ -103,7 +103,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: `results/benchmark.csv` z kolumnami `key_bits, k, t_enc_ms, t_server_ms, t_dec_ms, ct_bytes` (CSV commitujemy, to mały wynik końcowy).
 - [x] **K14 · Benchmark 3072 bit (opc.)** — zależy od: K13
   - Gotowe gdy: dopisane wiersze 3072 w `results/benchmark.csv`.
-- [ ] **K15 · Atak 3: niedeterminizm szyfrowania (opc.)** — `src/attacks/nondeterminism.py` — zależy od: K07
+- [x] **K15 · Atak 3: niedeterminizm szyfrowania (opc.)** — `src/attacks/nondeterminism.py` — zależy od: K07
   - Zrobić: ta sama wiadomość szyfrowana N razy → wszystkie szyfrogramy różne; dla kontrastu „deterministyczny” wariant (stałe `r`) → identyczne szyfrogramy, więc analiza częstości jest możliwa.
   - Gotowe gdy: skrypt wypisuje liczbę unikalnych szyfrogramów w obu wariantach.
 - [ ] **K16 · Atak 4: funkcja wycieku przez `exponent`** — `src/attacks/exponent_leak.py` — zależy od: K07
