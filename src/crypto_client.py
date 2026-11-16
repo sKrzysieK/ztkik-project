@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from phe import PaillierPrivateKey, PaillierPublicKey, generate_paillier_keypair
 
 from src.config import KEY_BITS
+from src.fixed_point import encode_features
 
 if TYPE_CHECKING:
     import numpy as np
@@ -21,8 +22,15 @@ def generate_keys(bits: int = KEY_BITS) -> tuple[PaillierPublicKey, PaillierPriv
 def encrypt_vectors(
     pub: PaillierPublicKey, X: np.ndarray, workers: int | None = None
 ) -> list[list[EncryptedNumber]]:
-    """Szyfruje każdą pozycję każdego wiersza (także zera) po zakodowaniu do `int`."""
-    raise NotImplementedError  # K07, K08
+    """Szyfruje każdą pozycję każdego wiersza (także zera) po zakodowaniu do `int`.
+
+    Szyfrujemy pełny wektor: wysłanie tylko pozycji niezerowych zdradziłoby serwerowi,
+    które słowa występują w wiadomości. Wartości całkowite dają wykładnik 0 w każdym
+    szyfrogramie, więc wykładnik też nic nie zdradza.
+    """
+    if workers not in (None, 1):
+        raise NotImplementedError("szyfrowanie równoległe: K08")
+    return [[pub.encrypt(x) for x in row] for row in encode_features(X)]
 
 
 def decrypt_predict(
