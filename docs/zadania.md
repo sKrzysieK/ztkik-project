@@ -81,7 +81,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K07 · Szyfrowanie wektorów (1 proces)** — `encrypt_vectors` z `workers=1` — zależy od: K05, K06
   - Zrobić: `encode_features` → `pub.encrypt(int)` dla **każdej** pozycji, także zer.
   - Gotowe gdy: testy: wynik ma kształt `n × k`; każdy szyfrogram ma `exponent == 0`; dwa szyfrowania tego samego wektora dają różne `ciphertext()`.
-- [ ] **K08 · Szyfrowanie równoległe** — `encrypt_vectors` z `workers > 1` — zależy od: K07
+- [x] **K08 · Szyfrowanie równoległe** — `encrypt_vectors` z `workers > 1` — zależy od: K07
   - Zrobić: `multiprocessing.Pool` po wierszach; na macOS jest `spawn`, więc funkcja robocza na poziomie modułu, a uruchomienie pod `if __name__ == "__main__"`.
   - Gotowe gdy: test: odszyfrowane wyniki identyczne dla `workers=1` i `workers=4`; pomiar przyspieszenia wpisany w opis PR.
 - [ ] **K09 · Obliczenie serwera** — `server_score` w `src/crypto_server.py` — zależy od: K05, K07

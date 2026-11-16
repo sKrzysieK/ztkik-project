@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import multiprocessing
+import os
+from functools import partial
 from typing import TYPE_CHECKING
 
 from phe import PaillierPrivateKey, PaillierPublicKey, generate_paillier_keypair
@@ -27,10 +30,29 @@ def encrypt_vectors(
     Szyfrujemy pełny wektor: wysłanie tylko pozycji niezerowych zdradziłoby serwerowi,
     które słowa występują w wiadomości. Wartości całkowite dają wykładnik 0 w każdym
     szyfrogramie, więc wykładnik też nic nie zdradza.
+
+    `workers`: liczba procesów; `None` = wszystkie rdzenie, `1` = bez `multiprocessing`.
+    Procesy są uruchamiane metodą `spawn`, więc skrypt wywołujący tę funkcję z
+    `workers > 1` musi mieć kod startowy pod `if __name__ == "__main__":`.
     """
-    if workers not in (None, 1):
-        raise NotImplementedError("szyfrowanie równoległe: K08")
-    return [[pub.encrypt(x) for x in row] for row in encode_features(X)]
+    rows = encode_features(X)
+    if workers is None:
+        workers = os.cpu_count() or 1
+    if workers < 1:
+        raise ValueError(f"workers musi być >= 1, a jest {workers}")
+    workers = min(workers, len(rows))
+    if workers <= 1:
+        return [_encrypt_row(pub, row) for row in rows]
+
+    # Kilka paczek na proces wyrównuje obciążenie, a nie mnoży narzutu na przesyłanie.
+    chunksize = max(1, len(rows) // (workers * 4))
+    with multiprocessing.get_context("spawn").Pool(workers) as pool:
+        return pool.map(partial(_encrypt_row, pub), rows, chunksize=chunksize)
+
+
+def _encrypt_row(pub: PaillierPublicKey, row: list[int]) -> list[EncryptedNumber]:
+    """Szyfruje jeden wiersz; na poziomie modułu, żeby dało się go wysłać do procesu."""
+    return [pub.encrypt(x) for x in row]
 
 
 def decrypt_predict(
