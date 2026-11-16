@@ -64,7 +64,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K02 · Szkielet katalogów** — zależy od: K01
   - Zrobić: katalogi z sekcji 6 planu (`src/`, `src/attacks/`, `tests/`, `data/`, `notebooks/`, `results/`, `report/`), `src/__init__.py`, puste moduły z kontraktu z docstringiem i `raise NotImplementedError`.
   - Gotowe gdy: `python -c "import src.data, src.model, src.crypto_client"` działa.
-- [ ] **K03 · `requirements.txt`** — zależy od: K01
+- [x] **K03 · `requirements.txt`** — zależy od: K01
   - Zrobić: przypięte wersje `phe`, `gmpy2`, `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `pytest`.
   - Gotowe gdy: instalacja w czystym `.venv` przechodzi, a szyfrowanie kluczem 2048 bit trwa kilka ms (≈ 4 ms; ≈ 60 ms oznacza, że `phe` nie używa `gmpy2`).
 - [ ] **K04 · `src/config.py`** — zależy od: K02
