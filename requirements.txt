@@ -1,0 +1,9 @@
+# Testowane na Pythonie 3.14.
+# gmpy2 jest wymagane: phe używa go automatycznie (~13x szybsze szyfrowanie).
+phe==1.5.0
+gmpy2==2.3.2
+scikit-learn==1.9.1
+pandas==3.1.1
+numpy==2.5.5
+matplotlib==3.11.2
+pytest==9.2.0
