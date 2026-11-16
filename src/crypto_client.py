@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from src.config import KEY_BITS
+
 if TYPE_CHECKING:
     import numpy as np
     from phe import EncryptedNumber, PaillierPrivateKey, PaillierPublicKey
 
 
-def generate_keys(bits: int = 2048) -> tuple[PaillierPublicKey, PaillierPrivateKey]:
+def generate_keys(bits: int = KEY_BITS) -> tuple[PaillierPublicKey, PaillierPrivateKey]:
     """Generuje parę kluczy Paillier o długości modułu `n` równej `bits`."""
     raise NotImplementedError  # K06
 
