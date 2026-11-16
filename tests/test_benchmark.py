@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.benchmark import WORDS_PER_MESSAGE, measure, synthetic_data
+from src.benchmark import WORDS_PER_MESSAGE, measure, synthetic_data, write_csv
 
 
 def test_synthetic_data_looks_like_tfidf():
@@ -26,3 +26,11 @@ def test_measure_reports_all_stages():
     assert result["k"] == 10
     assert result["ct_bytes"] == 128  # element Z_{n^2}: 2 · 512 bit
     assert all(result[key] > 0 for key in ("t_enc_ms", "t_server_ms", "t_dec_ms"))
+
+
+def test_write_csv_rounds_times(tmp_path):
+    path = tmp_path / "out" / "benchmark.csv"
+
+    write_csv([{"key_bits": 512, "k": 10, "t_enc_ms": 1.23456, "ct_bytes": 128}], path)
+
+    assert path.read_text().splitlines() == ["key_bits,k,t_enc_ms,ct_bytes", "512,10,1.23,128"]
