@@ -1,4 +1,57 @@
 % K18
 \section{Background}\label{sec:background}
 
-TODO
+\subsection{Paillier Cryptosystem}
+
+The Paillier cryptosystem~\cite{paillier1999} is a probabilistic public-key scheme that is additively homomorphic.
+We use the common variant with generator $g = n + 1$, which is also the one implemented by the \texttt{phe} library~\cite{phe}.
+
+\textit{Key generation.}
+Choose two random primes $p, q$ of equal bit length, set $n = pq$, $\lambda = (p-1)(q-1)$ and $\mu = \lambda^{-1} \bmod n$.
+The public key is $n$; the private key is $(\lambda, \mu)$.
+
+\textit{Encryption.}
+A message $m \in \mathbb{Z}_n$ is encrypted with a fresh random $r \in \mathbb{Z}_n^*$:
+\begin{equation}
+  c = \mathrm{Enc}(m) = (1 + n)^m \, r^n \bmod n^2 .
+\end{equation}
+
+\textit{Decryption.}
+With $L(u) = (u - 1) / n$,
+\begin{equation}
+  m = L\!\left(c^{\lambda} \bmod n^2\right) \mu \bmod n .
+\end{equation}
+
+\textit{Homomorphic properties.}
+For $m_1, m_2 \in \mathbb{Z}_n$ and a plaintext constant $k$,
+\begin{align}
+  \mathrm{Enc}(m_1) \cdot \mathrm{Enc}(m_2) \bmod n^2 &= \mathrm{Enc}(m_1 + m_2 \bmod n), \label{eq:hom-add}\\
+  \mathrm{Enc}(m)^{k} \bmod n^2 &= \mathrm{Enc}(k m \bmod n). \label{eq:hom-mul}
+\end{align}
+Hence a party holding only the public key can compute any linear function of encrypted values with plaintext coefficients.
+Multiplying two ciphertexts with each other is not possible, which is why the scheme is called \emph{partially} homomorphic.
+
+\textit{Signed values.}
+Plaintexts live in $\mathbb{Z}_n$, so \texttt{phe} represents a signed integer $m$ with $|m| < n/3$ as $m \bmod n$; values above $2n/3$ decode as negative.
+Real numbers are encoded as an integer mantissa together with a public exponent, which is attached to every ciphertext in plaintext.
+
+\textit{Security.}
+Paillier is semantically secure against chosen-plaintext attacks (IND-CPA) under the Decisional Composite Residuosity Assumption (DCRA): given $z \in \mathbb{Z}_{n^2}^*$, it is hard to decide whether $z$ is an $n$-th residue modulo $n^2$~\cite{paillier1999}.
+Because $r$ is fresh for every encryption, encrypting the same message twice yields different ciphertexts.
+A ciphertext is an element of $\mathbb{Z}_{n^2}$, i.e.\ twice as long as $n$ (\SI{512}{\byte} for a \num{2048}-bit modulus).
+
+\subsection{Multinomial Naive Bayes as a Linear Classifier}
+
+Multinomial naive Bayes models a message as a vector $\mathbf{x} \in \mathbb{R}_{\ge 0}^{k}$ of term weights (here TF-IDF values of $k$ selected terms) and scores a class $c$ by
+\begin{equation}
+  \log P(c \mid \mathbf{x}) = \log P(c) + \sum_{i=1}^{k} x_i \log \theta_{c,i} + \text{const},
+\end{equation}
+where $\theta_{c,i} = (N_{c,i} + \alpha) / (N_c + \alpha k)$ is the smoothed weight of term $i$ in class $c$, $N_{c,i}$ is the total weight of term $i$ in training messages of class $c$, $N_c = \sum_i N_{c,i}$, and $\alpha > 0$ is the smoothing parameter.
+
+For two classes, the decision depends only on the difference of the two scores, the log-odds
+\begin{equation}
+  \Delta(\mathbf{x}) = b + \sum_{i=1}^{k} w_i x_i, \label{eq:log-odds}
+\end{equation}
+with $b = \log P(\text{spam}) - \log P(\text{ham})$ and $w_i = \log \theta_{\text{spam},i} - \log \theta_{\text{ham},i}$; a message is classified as spam if and only if $\Delta(\mathbf{x}) > 0$.
+\Cref{eq:log-odds} is an inner product of the features with plaintext weights plus a constant, so by \cref{eq:hom-add,eq:hom-mul} it can be evaluated entirely on encrypted features.
+A single value $\Delta$ also serves directly as the score for ROC analysis.
