@@ -76,7 +76,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K05 · Kodowanie stałoprzecinkowe** — `src/fixed_point.py` — zależy od: K04
   - Zrobić: cztery funkcje z kontraktu.
   - Gotowe gdy: testy: wynik to Pythonowe `int`; `decode_score(plain_int_scores(...))` różni się od `b + X·w` (float) o mniej niż 1e-4 na losowych danych; ujemne `b` i `w` działają.
-- [ ] **K06 · Generowanie kluczy** — `generate_keys` w `src/crypto_client.py` — zależy od: K04
+- [x] **K06 · Generowanie kluczy** — `generate_keys` w `src/crypto_client.py` — zależy od: K04
   - Gotowe gdy: test: klucz ma żądaną długość `n`.
 - [ ] **K07 · Szyfrowanie wektorów (1 proces)** — `encrypt_vectors` z `workers=1` — zależy od: K05, K06
   - Zrobić: `encode_features` → `pub.encrypt(int)` dla **każdej** pozycji, także zer.
