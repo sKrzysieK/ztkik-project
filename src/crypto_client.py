@@ -7,13 +7,13 @@ import os
 from functools import partial
 from typing import TYPE_CHECKING
 
+import numpy as np
 from phe import PaillierPrivateKey, PaillierPublicKey, generate_paillier_keypair
 
 from src.config import KEY_BITS
-from src.fixed_point import encode_features
+from src.fixed_point import decode_score, encode_features
 
 if TYPE_CHECKING:
-    import numpy as np
     from phe import EncryptedNumber
 
 
@@ -58,5 +58,18 @@ def _encrypt_row(pub: PaillierPublicKey, row: list[int]) -> list[EncryptedNumber
 def decrypt_predict(
     priv: PaillierPrivateKey, enc_scores: list[EncryptedNumber]
 ) -> tuple[np.ndarray, np.ndarray, list[int]]:
-    """Zwraca `y_pred` (0/1), `scores` (log-odds, float) i surowe wyniki `int`."""
-    raise NotImplementedError  # K10
+    """Zwraca `y_pred` (0/1), `scores` (log-odds, float) i surowe wyniki `int`.
+
+    Spam (1) wtedy i tylko wtedy, gdy `Δ > 0`. Znak bierzemy z dokładnego wyniku
+    całkowitego, a `scores` (po `decode_score`) służą do ROC-AUC i wykresów.
+    """
+    raw = []
+    for c in enc_scores:
+        if c.exponent != 0:
+            raise ValueError(
+                f"oczekiwano wyniku stałoprzecinkowego (wykładnik 0), a jest {c.exponent}"
+            )
+        raw.append(priv.decrypt(c))
+    y_pred = np.array([d > 0 for d in raw], dtype=np.int64)
+    scores = np.array([decode_score(d) for d in raw], dtype=np.float64)
+    return y_pred, scores, raw
