@@ -89,7 +89,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: test: wynik ma `exponent == 0`.
 - [x] **K10 · Odszyfrowanie i predykcja** — `decrypt_predict` — zależy od: K09
   - Gotowe gdy: test: `y_pred == (scores > 0)`; zwracane surowe `int` gotowe do porównania `==`.
-- [ ] **K11 · Test integracyjny `enc == plain`** — `tests/test_crypto_e2e.py` — zależy od: K10
+- [x] **K11 · Test integracyjny `enc == plain`** — `tests/test_crypto_e2e.py` — zależy od: K10
   - Zrobić: losowe `X` (20 × 50, rzadkie, wartości jak TF-IDF), losowe `b`, `w`; pełny przebieg K07 → K09 → K10.
   - Gotowe gdy: surowe int z `decrypt_predict` są **równe** `plain_int_scores`, a predykcje są równe znakowi `b + X·w` (float). `pytest` przechodzi w < 30 s.
 
