@@ -112,7 +112,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Raport (część niezależna od wyników)
 
-- [ ] **K17 · Szablon IEEEtran** — `report/` — zależy od: K02
+- [x] **K17 · Szablon IEEEtran** — `report/` — zależy od: K02
   - Zrobić: `IEEEtran.cls` (`tlmgr install ieeetran` albo plik w `report/`), `main.tex` (conference), **każda sekcja w osobnym pliku** `report/sections/*.tex` (mniej konfliktów przy równoległej pracy), `\graphicspath{{../results/figures/}}`, `references.bib` z trzema źródłami z karty projektu.
   - Gotowe gdy: `latexmk -pdf main.tex` buduje PDF z pustymi sekcjami bez błędów.
 - [ ] **K18 · Sekcja II. Background** — `sections/background.tex` — zależy od: K17
