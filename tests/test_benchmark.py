@@ -33,4 +33,21 @@ def test_write_csv_rounds_times(tmp_path):
 
     write_csv([{"key_bits": 512, "k": 10, "t_enc_ms": 1.23456, "ct_bytes": 128}], path)
 
-    assert path.read_text().splitlines() == ["key_bits,k,t_enc_ms,ct_bytes", "512,10,1.23,128"]
+    assert path.read_bytes() == b"key_bits,k,t_enc_ms,ct_bytes\n512,10,1.23,128\n"
+
+
+def test_write_csv_append_adds_rows_without_second_header(tmp_path):
+    path = tmp_path / "benchmark.csv"
+
+    write_csv([{"key_bits": 1024, "k": 10}], path)
+    write_csv([{"key_bits": 3072, "k": 10}], path, append=True)
+
+    assert path.read_text().splitlines() == ["key_bits,k", "1024,10", "3072,10"]
+
+
+def test_write_csv_append_to_missing_file_writes_header(tmp_path):
+    path = tmp_path / "benchmark.csv"
+
+    write_csv([{"key_bits": 3072, "k": 10}], path, append=True)
+
+    assert path.read_text().splitlines() == ["key_bits,k", "3072,10"]

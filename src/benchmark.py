@@ -6,6 +6,7 @@ tylko od długości klucza i liczby cech k.
 Uruchomienie:
 - jeden pomiar: `python -m src.benchmark --key-bits 1024 --k 100 --n 5`
 - siatka do raportu: `python -m src.benchmark --key-bits 1024 2048 --k 500 750 1000 --n 10 --out results/benchmark.csv`
+- dopisanie klucza 3072 bit: `python -m src.benchmark --key-bits 3072 --k 500 750 1000 --n 10 --out results/benchmark.csv --append`
 """
 
 from __future__ import annotations
@@ -73,12 +74,18 @@ def measure(key_bits: int, k: int, n_messages: int, workers: int = 1) -> dict[st
     }
 
 
-def write_csv(results: list[dict[str, float | int]], path: Path) -> None:
-    """Zapisuje wyniki do CSV; czasy zaokrąglone do 0,01 ms."""
+def write_csv(results: list[dict[str, float | int]], path: Path, append: bool = False) -> None:
+    """Zapisuje wyniki do CSV; czasy zaokrąglone do 0,01 ms.
+
+    `append=True` dopisuje wiersze do istniejącego pliku (nagłówek tylko w nowym pliku).
+    Końce linii zawsze `\\n`, żeby plik nie zależał od systemu i ustawień Gita.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(results[0]))
-        writer.writeheader()
+    write_header = not (append and path.exists())
+    with path.open("a" if append else "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(results[0]), lineterminator="\n")
+        if write_header:
+            writer.writeheader()
         for row in results:
             writer.writerow({k: round(v, 2) if isinstance(v, float) else v for k, v in row.items()})
 
@@ -90,6 +97,7 @@ def main() -> None:
     parser.add_argument("--n", type=int, default=5, help="liczba wiadomości na pomiar")
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--out", type=Path, help="zapisz wyniki do pliku CSV")
+    parser.add_argument("--append", action="store_true", help="dopisz do istniejącego CSV")
     args = parser.parse_args()
 
     results = []
@@ -103,7 +111,7 @@ def main() -> None:
             flush=True,
         )
     if args.out:
-        write_csv(results, args.out)
+        write_csv(results, args.out, append=args.append)
         print(f"zapisano {args.out}")
 
 
