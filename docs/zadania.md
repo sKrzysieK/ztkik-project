@@ -115,7 +115,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K17 · Szablon IEEEtran** — `report/` — zależy od: K02
   - Zrobić: `IEEEtran.cls` (`tlmgr install ieeetran` albo plik w `report/`), `main.tex` (conference), **każda sekcja w osobnym pliku** `report/sections/*.tex` (mniej konfliktów przy równoległej pracy), `\graphicspath{{../results/figures/}}`, `references.bib` z trzema źródłami z karty projektu.
   - Gotowe gdy: `latexmk -pdf main.tex` buduje PDF z pustymi sekcjami bez błędów.
-- [ ] **K18 · Sekcja II. Background** — `sections/background.tex` — zależy od: K17
+- [x] **K18 · Sekcja II. Background** — `sections/background.tex` — zależy od: K17
   - Zrobić: Paillier (generowanie kluczy, szyfrowanie, własności homomorficzne, DCRA, IND-CPA), Multinomial NB i sprowadzenie do log-odds.
 - [ ] **K19 · Sekcja III. Threat Model** — `sections/threat-model.tex` — zależy od: K17
   - Zrobić: na podstawie sekcji 3 planu: profil przeciwnika, interfejs (CPA), Kerckhoffs, poza zakresem, kryteria sukcesu (sekcja 1 planu).
