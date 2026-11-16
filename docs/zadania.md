@@ -78,7 +78,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: testy: wynik to Pythonowe `int`; `decode_score(plain_int_scores(...))` różni się od `b + X·w` (float) o mniej niż 1e-4 na losowych danych; ujemne `b` i `w` działają.
 - [x] **K06 · Generowanie kluczy** — `generate_keys` w `src/crypto_client.py` — zależy od: K04
   - Gotowe gdy: test: klucz ma żądaną długość `n`.
-- [ ] **K07 · Szyfrowanie wektorów (1 proces)** — `encrypt_vectors` z `workers=1` — zależy od: K05, K06
+- [x] **K07 · Szyfrowanie wektorów (1 proces)** — `encrypt_vectors` z `workers=1` — zależy od: K05, K06
   - Zrobić: `encode_features` → `pub.encrypt(int)` dla **każdej** pozycji, także zer.
   - Gotowe gdy: testy: wynik ma kształt `n × k`; każdy szyfrogram ma `exponent == 0`; dwa szyfrowania tego samego wektora dają różne `ciphertext()`.
 - [ ] **K08 · Szyfrowanie równoległe** — `encrypt_vectors` z `workers > 1` — zależy od: K07
