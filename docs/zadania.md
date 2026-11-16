@@ -119,7 +119,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Zrobić: Paillier (generowanie kluczy, szyfrowanie, własności homomorficzne, DCRA, IND-CPA), Multinomial NB i sprowadzenie do log-odds.
 - [x] **K19 · Sekcja III. Threat Model** — `sections/threat-model.tex` — zależy od: K17
   - Zrobić: na podstawie sekcji 3 planu: profil przeciwnika, interfejs (CPA), Kerckhoffs, poza zakresem, kryteria sukcesu (sekcja 1 planu).
-- [ ] **K20 · Sekcja IV. System Design** — `sections/system-design.tex` — zależy od: K11, K17
+- [x] **K20 · Sekcja IV. System Design** — `sections/system-design.tex` — zależy od: K11, K17
   - Zrobić: protokół (tabela kroków z sekcji 2 planu), kodowanie stałoprzecinkowe i uzasadnienie (wykładnik, dokładność `==`), szyfrowanie pełnego wektora.
 
 ---
