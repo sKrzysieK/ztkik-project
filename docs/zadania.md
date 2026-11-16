@@ -58,7 +58,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Setup
 
-- [ ] **K01 · Repo na GitHubie** — zależy od: —
+- [x] **K01 · Repo na GitHubie** — zależy od: —
   - Zrobić: utworzyć repo, dodać Piotra jako współpracownika, wypchnąć obecny stan (`.gitignore`, `docs/`, karta projektu).
   - Gotowe gdy: Piotr klonuje repo i może pushować gałęzie.
 - [x] **K02 · Szkielet katalogów** — zależy od: K01
@@ -95,7 +95,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Benchmark i ataki (część niezależna od danych)
 
-- [ ] **K12 · Funkcja benchmarku** — `src/benchmark.py` — zależy od: K10
+- [x] **K12 · Funkcja benchmarku** — `src/benchmark.py` — zależy od: K10
   - Zrobić: `measure(key_bits, k, n_messages)` na syntetycznych danych → czas szyfrowania, serwera i odszyfrowania na wiadomość, rozmiar szyfrogramu w bajtach.
   - Gotowe gdy: zwraca słownik; `python -m src.benchmark --key-bits 1024 --k 100 --n 5` wypisuje wynik.
 - [ ] **K13 · Przebiegi benchmarku** — zależy od: K12
