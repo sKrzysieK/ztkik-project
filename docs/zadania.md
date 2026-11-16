@@ -61,7 +61,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [ ] **K01 · Repo na GitHubie** — zależy od: —
   - Zrobić: utworzyć repo, dodać Piotra jako współpracownika, wypchnąć obecny stan (`.gitignore`, `docs/`, karta projektu).
   - Gotowe gdy: Piotr klonuje repo i może pushować gałęzie.
-- [ ] **K02 · Szkielet katalogów** — zależy od: K01
+- [x] **K02 · Szkielet katalogów** — zależy od: K01
   - Zrobić: katalogi z sekcji 6 planu (`src/`, `src/attacks/`, `tests/`, `data/`, `notebooks/`, `results/`, `report/`), `src/__init__.py`, puste moduły z kontraktu z docstringiem i `raise NotImplementedError`.
   - Gotowe gdy: `python -c "import src.data, src.model, src.crypto_client"` działa.
 - [ ] **K03 · `requirements.txt`** — zależy od: K01
