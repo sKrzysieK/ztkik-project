@@ -1,0 +1,12 @@
+{
+  "n_messages": 1035,
+  "k": 1000,
+  "key_bits": 2048,
+  "workers": 15,
+  "t_enc_s": 538.6,
+  "t_server_s": 68.0,
+  "t_dec_s": 1.2,
+  "exact_int_match": 1.0,
+  "accuracy": 0.9806763285024155,
+  "t_total_s": 607.9
+}
