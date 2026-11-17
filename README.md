@@ -67,6 +67,7 @@ danych nie pobrano):
 ```
 
 Raport: `cd report && latexmk main.tex` (IEEEtran; wykresy bierze z `results/figures/`).
+Slajdy na obronę: `cd slides && latexmk main.tex` (Beamer, te same wykresy i tabela metryk).
 
 ## Wyniki w skrócie
 
@@ -120,4 +121,5 @@ src/attacks/            ataki 1–4
 src/run_all.py          wszystko jednym poleceniem
 notebooks/01-eda.ipynb  analiza danych
 report/                 raport (IEEEtran)
+slides/                 slajdy na obronę (Beamer)
 ```
