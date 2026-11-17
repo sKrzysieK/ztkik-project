@@ -1,0 +1,8 @@
+{
+  "n_ciphertexts": 6000,
+  "distinct_plaintexts": 451,
+  "distinct_ct_random": 6000,
+  "distinct_ct_fixed_r": 451,
+  "recovered_random": 0.00016666666666666666,
+  "recovered_fixed_r": 1.0
+}
