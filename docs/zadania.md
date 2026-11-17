@@ -159,7 +159,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Ewaluacja (`src/evaluate.py`, czyta tylko z cache)
 
-- [ ] **P11 · Tabela metryk** — zależy od: P07, P10
+- [x] **P11 · Tabela metryk** — zależy od: P07, P10
   - Zrobić: accuracy, F1 (spam), precision, recall, ROC-AUC (z `delta_enc`) dla: wersji zaszyfrowanej, jawnego NB, Dummy.
   - Gotowe gdy: `results/metrics.csv` i ta sama tabela jako `results/metrics.tex` (booktabs) do raportu.
 - [ ] **P12 · Zgodność i dokładność** — zależy od: P10
