@@ -49,7 +49,7 @@ Uwagi projektowe:
 
 ## 4. Metodyka i grupa kontrolna
 
-- Dane: SMS Spam Collection (UCI), 5574 wiadomości, w tym 403 dokładne duplikaty (5171 unikalnych, głównie szablonowy spam). **Deduplikacja przed podziałem** — bez niej ok. 12% wiadomości testowych występuje dosłownie w zbiorze treningowym, co zawyża wyniki. Podział **stratyfikowany 80/20** (~1035 wiadomości testowych), stały `random_state`, zbiór testowy nietykany do końca.
+- Dane: SMS Spam Collection (UCI), 5574 wiadomości, w tym 403 dokładne duplikaty (5171 unikalnych; 309 ham, głównie szablonowe odpowiedzi, i 94 spam — spam jest duplikowany proporcjonalnie dwa razy częściej). **Deduplikacja przed podziałem** — bez niej ok. 12% wiadomości testowych (22% spamu testowego) występuje dosłownie w zbiorze treningowym, co zawyża wyniki. Podział **stratyfikowany 80/20** (~1035 wiadomości testowych), stały `random_state`, zbiór testowy nietykany do końca.
 - Hiperparametry (`alpha` NB, k cech, parametry TF-IDF) dobierane **5-fold CV wyłącznie na zbiorze treningowym**. TF-IDF i chi² dopasowujemy **wewnątrz** foldów (`Pipeline` w `GridSearchCV`), inaczej CV przecieka.
 - Zakres k: wstępny przebieg (bez strojenia, α=0.1, dane po deduplikacji) dał accuracy 0.927 / 0.975 / 0.982 dla k = 200 / 500 / 1000 — k=200 nie spełnia kryterium, więc szukamy w k ≈ 500–1000.
 - Grupy kontrolne:

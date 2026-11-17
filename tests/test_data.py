@@ -1,6 +1,6 @@
 import pytest
 
-from src.data import RAW_FILE, load_dataset, load_split
+from src.data import RAW_FILE, load_dataset, load_split, read_raw
 
 # Cudzysłów bez pary jak w prawdziwych SMS-ach; trzeci wiersz to duplikat pierwszego.
 SAMPLE = (
@@ -42,6 +42,7 @@ def test_load_dataset_without_file_points_to_download(tmp_path):
 
 @pytest.mark.skipif(not RAW_FILE.exists(), reason="brak danych: python data/download.py")
 def test_real_dataset_after_deduplication():
+    assert len(read_raw()) == 5574
     df = load_dataset()
 
     assert len(df) == 5171
