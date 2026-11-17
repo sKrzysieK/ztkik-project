@@ -1,13 +1,14 @@
 """Metryki klasyfikacji i ewaluacja wyników zapisanych w `results/cache/`.
 
 Moduł nie trenuje ani nie szyfruje niczego: czyta `scores.npz` (`src.pipeline`) i
-`baselines.npz` (`src.baselines`), więc tabelę można odtworzyć w sekundę.
+`baselines.npz` (`src.baselines`), więc tabelę i zgodność można odtworzyć w sekundę.
 
 Uruchomienie: `python -m src.evaluate`
 """
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -56,20 +57,14 @@ def metrics_table(
     Wersja zaszyfrowana: predykcja to znak `delta_enc`, a ROC-AUC liczymy z `delta_enc`.
     Oba pliki muszą dotyczyć tych samych wiadomości (np. nie przebiegu z `--limit`).
     """
-    with np.load(scores_path) as scores, np.load(baselines_path) as baselines:
-        y_test = scores["y_test"]
-        if not np.array_equal(y_test, baselines["y_test"]):
-            raise ValueError(
-                f"{scores_path.name} i {baselines_path.name} dotyczą różnych wiadomości; "
-                "uruchom pełny `python -m src.pipeline` (bez --limit) i `python -m src.baselines`"
+    scores, baselines = load_cached(scores_path, baselines_path)
+    y_test, delta_enc = scores["y_test"], scores["delta_enc"]
+    rows = {"encrypted": classification_metrics(y_test, (delta_enc > 0).astype(int), delta_enc)}
+    for name in MODEL_NAMES:
+        if f"{name}_pred" in baselines:
+            rows[name] = classification_metrics(
+                y_test, baselines[f"{name}_pred"], baselines[f"{name}_score"]
             )
-        delta_enc = scores["delta_enc"]
-        rows = {"encrypted": classification_metrics(y_test, (delta_enc > 0).astype(int), delta_enc)}
-        for name in MODEL_NAMES:
-            if f"{name}_pred" in baselines:
-                rows[name] = classification_metrics(
-                    y_test, baselines[f"{name}_pred"], baselines[f"{name}_score"]
-                )
     return pd.DataFrame.from_dict(rows, orient="index", columns=list(METRICS)).rename_axis("model")
 
 
@@ -99,11 +94,57 @@ def save_metrics_table(
     tex_path.write_text("\n".join(lines) + "\n")
 
 
+def load_cached(scores_path: Path, baselines_path: Path) -> tuple[dict, dict]:
+    """Wczytuje oba pliki cache i sprawdza, że dotyczą tych samych wiadomości."""
+    with np.load(scores_path) as scores, np.load(baselines_path) as baselines:
+        scores, baselines = dict(scores), dict(baselines)
+    if not np.array_equal(scores["y_test"], baselines["y_test"]):
+        raise ValueError(
+            f"{scores_path.name} i {baselines_path.name} dotyczą różnych wiadomości; "
+            "uruchom pełny `python -m src.pipeline` (bez --limit) i `python -m src.baselines`"
+        )
+    return scores, baselines
+
+
+def agreement(
+    scores_path: Path = SCORES_FILE, baselines_path: Path = BASELINES_FILE
+) -> dict[str, float | int]:
+    """Zwraca zgodność wersji zaszyfrowanej z jawnym NB (kryterium: 100% w obu miarach).
+
+    - `same_prediction`: odsetek wiadomości, dla których znak `delta_enc` daje tę samą
+      klasę co `MultinomialNB.predict` (niezależna od nas implementacja scikit-learn);
+    - `exact_int_match`: odsetek wiadomości, dla których odszyfrowany `int` jest równy
+      temu samemu obliczeniu wykonanemu jawnie na liczbach całkowitych.
+    """
+    scores, baselines = load_cached(scores_path, baselines_path)
+    same = (scores["delta_enc"] > 0).astype(int) == baselines["plain_nb_pred"]
+    return {
+        "n_messages": int(len(same)),
+        "same_prediction": float(same.mean()),
+        "n_different_prediction": int((~same).sum()),
+        "exact_int_match": float(scores["exact_int_match"].mean()),
+        "n_int_mismatch": int((~scores["exact_int_match"]).sum()),
+    }
+
+
+def save_json(result: dict, path: Path) -> None:
+    """Zapisuje mały wynik jako JSON (commitujemy go, raport cytuje liczby stąd)."""
+    path.write_text(json.dumps(result, indent=2) + "\n")
+
+
 def main() -> None:
     table = metrics_table()
     save_metrics_table(table)
     print(table.to_string(float_format="%.4f"))
     print(f"zapisano {(RESULTS_DIR / 'metrics.csv').relative_to(ROOT)} i .tex")
+
+    agree = agreement()
+    save_json(agree, RESULTS_DIR / "agreement.json")
+    print(
+        f"\nzgodność z jawnym NB: {agree['same_prediction']:.2%} "
+        f"({agree['n_different_prediction']} różnych z {agree['n_messages']}), "
+        f"exact_int_match: {agree['exact_int_match']:.2%}"
+    )
 
 
 if __name__ == "__main__":
