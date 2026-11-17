@@ -7,3 +7,5 @@ pandas==3.1.1
 numpy==2.5.5
 matplotlib==3.11.2
 pytest==9.2.0
+# Notatniki w notebooks/ (EDA): `jupyter notebook` albo VS Code.
+notebook==7.6.5
