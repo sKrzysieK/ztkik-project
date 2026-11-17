@@ -145,7 +145,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: test: `(b + X_test·w > 0)` daje **te same** predykcje co `model.predict(texts_test)`.
 - [x] **P07 · Grupy kontrolne** — `src/evaluate.py` lub `src/baselines.py` — zależy od: P06
   - Zrobić: metryki jawnego NB i `DummyClassifier(strategy="most_frequent")` na zbiorze testowym.
-- [ ] **P08 · Regresja logistyczna (opc.)** — zależy od: P07
+- [x] **P08 · Regresja logistyczna (opc.)** — zależy od: P07
   - Zrobić: jako dodatkowa grupa kontrolna (też liniowa, więc też działałaby na Paillierze).
 
 ### Przebieg zaszyfrowany
