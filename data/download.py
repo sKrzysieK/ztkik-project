@@ -28,6 +28,7 @@ SHA256 = "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d"
 
 
 def _sha256(path: Path) -> str:
+    """Zwraca sumę SHA-256 pliku jako tekst szesnastkowy."""
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
