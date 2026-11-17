@@ -143,7 +143,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P06 · Eksport cech i wag** — `features`, `log_odds_weights` — zależy od: P05
   - Zrobić: `b = class_log_prior_[1] − class_log_prior_[0]`, `w = feature_log_prob_[1] − feature_log_prob_[0]`; `features` zwraca dense `float64`.
   - Gotowe gdy: test: `(b + X_test·w > 0)` daje **te same** predykcje co `model.predict(texts_test)`.
-- [ ] **P07 · Grupy kontrolne** — `src/evaluate.py` lub `src/baselines.py` — zależy od: P06
+- [x] **P07 · Grupy kontrolne** — `src/evaluate.py` lub `src/baselines.py` — zależy od: P06
   - Zrobić: metryki jawnego NB i `DummyClassifier(strategy="most_frequent")` na zbiorze testowym.
 - [ ] **P08 · Regresja logistyczna (opc.)** — zależy od: P07
   - Zrobić: jako dodatkowa grupa kontrolna (też liniowa, więc też działałaby na Paillierze).
