@@ -140,7 +140,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P05 · Strojenie modelu** — `fit_model` w `src/model.py` — zależy od: P03
   - Zrobić: `Pipeline` (TF-IDF → `SelectKBest(chi2)` → `MultinomialNB`) w `GridSearchCV`, 5-fold, **tylko na train**; siatka: `alpha`, k ∈ 500–1000, parametry TF-IDF.
   - Gotowe gdy: zapisane `results/best_params.json` i `results/cv_results.csv` (potrzebne do wykresu accuracy vs. k).
-- [ ] **P06 · Eksport cech i wag** — `features`, `log_odds_weights` — zależy od: P05
+- [x] **P06 · Eksport cech i wag** — `features`, `log_odds_weights` — zależy od: P05
   - Zrobić: `b = class_log_prior_[1] − class_log_prior_[0]`, `w = feature_log_prob_[1] − feature_log_prob_[0]`; `features` zwraca dense `float64`.
   - Gotowe gdy: test: `(b + X_test·w > 0)` daje **te same** predykcje co `model.predict(texts_test)`.
 - [ ] **P07 · Grupy kontrolne** — `src/evaluate.py` lub `src/baselines.py` — zależy od: P06
