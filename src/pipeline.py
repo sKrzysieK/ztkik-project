@@ -9,18 +9,20 @@ całkowitych jest dokładne, więc dwa przebiegi dają te same `delta_enc`.
 
 Uruchomienie:
 - szybka próba: `python -m src.pipeline --limit 50 --key-bits 1024`
-- pełny przebieg: `python -m src.pipeline`
+- pełny przebieg: `python -m src.pipeline` (zapisuje też `results/pipeline_run.json`)
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import time
 from pathlib import Path
 
 import numpy as np
 
-from src.config import CACHE_DIR, KEY_BITS, ROOT
+from src.config import CACHE_DIR, KEY_BITS, RESULTS_DIR, ROOT
 from src.crypto_client import decrypt_predict, encrypt_vectors, generate_keys
 from src.crypto_server import server_score
 from src.data import load_split
@@ -28,6 +30,8 @@ from src.fixed_point import encode_features, encode_weights, plain_int_scores
 from src.model import features, fit_best_model, log_odds_weights
 
 SCORES_FILE = CACHE_DIR / "scores.npz"
+# Podsumowanie pełnego przebiegu (czasy, zgodność) — mały plik, commitujemy go.
+RUN_FILE = RESULTS_DIR / "pipeline_run.json"
 
 
 def run(
@@ -75,12 +79,20 @@ def run(
         "n_messages": len(y_test),
         "k": X.shape[1],
         "key_bits": key_bits,
+        "workers": workers or os.cpu_count() or 1,
         "t_enc_s": t1 - t0,
         "t_server_s": t2 - t1,
         "t_dec_s": t3 - t2,
         "exact_int_match": float(exact_int_match.mean()),
         "accuracy": float((y_pred == y_test).mean()),
     }
+
+
+def save_summary(summary: dict[str, float | int], path: Path = RUN_FILE) -> None:
+    """Zapisuje podsumowanie przebiegu; czasy w sekundach zaokrąglone do 0,1 s."""
+    rounded = {k: round(v, 1) if k.startswith("t_") else v for k, v in summary.items()}
+    rounded["t_total_s"] = round(sum(v for k, v in summary.items() if k.startswith("t_")), 1)
+    path.write_text(json.dumps(rounded, indent=2) + "\n")
 
 
 def main() -> None:
@@ -91,6 +103,8 @@ def main() -> None:
     args = parser.parse_args()
 
     summary = run(args.limit, args.key_bits, args.workers)
+    if args.limit is None:
+        save_summary(summary)
     print(
         f"{summary['n_messages']} wiadomości, k = {summary['k']}, klucz {summary['key_bits']} bit\n"
         f"szyfrowanie {summary['t_enc_s']:.1f} s, serwer {summary['t_server_s']:.1f} s, "

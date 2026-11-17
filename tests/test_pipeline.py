@@ -1,10 +1,12 @@
+import json
+
 import numpy as np
 import pytest
 
 from src.data import RAW_FILE
-from src.pipeline import run
+from src.pipeline import run, save_summary
 
-pytestmark = pytest.mark.skipif(not RAW_FILE.exists(), reason="brak danych: python data/download.py")
+needs_data = pytest.mark.skipif(not RAW_FILE.exists(), reason="brak danych: python data/download.py")
 
 TEST_KEY_BITS = 512
 
@@ -17,6 +19,7 @@ def two_runs(tmp_path_factory):
     return (first, np.load(out / "first.npz")), (second, np.load(out / "second.npz"))
 
 
+@needs_data
 def test_scores_file_has_contract_format(two_runs):
     (summary, scores), _ = two_runs
 
@@ -27,6 +30,7 @@ def test_scores_file_has_contract_format(two_runs):
     assert summary["n_messages"] == 4 and summary["key_bits"] == TEST_KEY_BITS
 
 
+@needs_data
 def test_encrypted_scores_are_exact_and_match_plain_model(two_runs):
     (summary, scores), _ = two_runs
 
@@ -36,9 +40,26 @@ def test_encrypted_scores_are_exact_and_match_plain_model(two_runs):
     assert ((scores["delta_enc"] > 0) == (scores["delta_float"] > 0)).all()
 
 
+@needs_data
 def test_two_runs_give_identical_scores(two_runs):
     (_, first), (_, second) = two_runs
 
     # Szyfrogramy są różne (nowe klucze i r), ale wyniki na liczbach całkowitych te same.
     assert np.array_equal(first["delta_enc"], second["delta_enc"])
     assert np.array_equal(first["y_test"], second["y_test"])
+
+
+def test_save_summary_rounds_times_and_adds_total(tmp_path):
+    path = tmp_path / "pipeline_run.json"
+    summary = {"n_messages": 3, "t_enc_s": 1.234, "t_server_s": 0.26, "t_dec_s": 0.04, "accuracy": 0.987654}
+
+    save_summary(summary, path)
+
+    assert json.loads(path.read_text()) == {
+        "n_messages": 3,
+        "t_enc_s": 1.2,
+        "t_server_s": 0.3,
+        "t_dec_s": 0.0,
+        "accuracy": 0.987654,
+        "t_total_s": 1.5,
+    }

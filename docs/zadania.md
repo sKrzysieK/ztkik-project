@@ -153,7 +153,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P09 · Skrypt end-to-end** — `src/pipeline.py` — zależy od: P06, K11
   - Zrobić: `python -m src.pipeline [--limit N] [--key-bits B]`: podział → model → cechy → klucze → `encrypt_vectors` → `server_score` → `decrypt_predict` → zapis `results/cache/scores.npz` (format z kontraktu); `exact_int_match` liczone przez porównanie z `plain_int_scores`.
   - Gotowe gdy: `--limit 50 --key-bits 1024` przechodzi, a `exact_int_match` jest wszędzie `True` (kamień milowy: pierwszy przebieg end-to-end).
-- [ ] **P10 · Pełny przebieg** — zależy od: P09, K08
+- [x] **P10 · Pełny przebieg** — zależy od: P09, K08
   - Zrobić: cały zbiór testowy, klucz 2048 bit, `workers` = liczba rdzeni.
   - Gotowe gdy: pełny `scores.npz` istnieje; czas przebiegu wpisany w opis PR / notatkę przekazania.
 
