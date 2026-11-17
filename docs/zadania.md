@@ -232,6 +232,7 @@ Przy każdym przekazaniu dopisz wiersz w tabeli (data, kto → komu, co skończo
 | Data | Kto → komu | Notatka |
 | --- | --- | --- |
 | 2026-11-16 | Krzysztof → Piotr | Runda 1 skończona: K01–K20, łącznie z opcjonalnymi K14 i K15. Szczegóły [niżej](#2026-11-16--krzysztof--piotr). |
+| 2026-11-17 | Piotr → Krzysztof | Runda 2 skończona: P01–P24, łącznie z opcjonalnym P08. Szczegóły [niżej](#2026-11-17--piotr--krzysztof). |
 
 ### 2026-11-16 · Krzysztof → Piotr
 
@@ -262,3 +263,30 @@ Przy każdym przekazaniu dopisz wiersz w tabeli (data, kto → komu, co skończo
 **Na co czekam od ciebie (runda 3)**
 - K21 (atak 4 na prawdziwych danych) potrzebuje P06 (`features`, `log_odds_weights`).
 - K22–K24 potrzebują twoich sekcji raportu i wyników (P21–P23).
+
+### 2026-11-17 · Piotr → Krzysztof
+
+**Start**
+- Dane: `python data/download.py` (sprawdza SHA-256), potem `python -m pytest` — testy na prawdziwych danych są pomijane, jeśli `data/raw/` jest puste.
+- Wszystkie wyniki: `python -m src.run_all` (ok. 14 min na 15 rdzeniach); bez ponownego szyfrowania zbioru testowego `--skip-pipeline` (ok. 3,5 min, głównie atak 1).
+
+**Do K21 (atak 4 na prawdziwych danych)**
+- Cechy i wagi: `features(model, texts)` i `log_odds_weights(model)` z `src.model`; model z wybranymi parametrami bez ponownego strojenia: `fit_best_model(texts_train, y_train)` (czyta `results/best_params.json`). Najlepsze z CV: k = 1000, więc dla k = 500 trzeba zbudować model z `select__k=500` (np. `build_pipeline().set_params(**{**best_params(), "select__k": 500})`).
+- Na prawdziwych danych wektory są dużo rzadsze niż w `synthetic_data`: mediana 3 niezerowe cechy na wiadomość (maks. 24 przy k = 1000), a nie 15. 61 wiadomości testowych nie ma żadnej niezerowej cechy.
+- W `src/run_all.py` atak 4 dopisz do funkcji `attacks()` (jest o tym w jej docstringu); wynik zapisuj do `results/exponent_leak.csv`, jak w opisie K21.
+
+**Do K22–K24 (raport)**
+- `report/sections/security.tex`: wstęp sekcji i podsekcje A–B (ataki 1–2) z tabelą `tab:attacks`; na końcu komentarz, gdzie dopisać ataki 3–4. Wynik ataku 3 z `run_all` jest w `results/attack_nondeterminism.json`.
+- Tabela metryk to `\input{../results/metrics.tex}`, więc po ponownym `src.evaluate` aktualizuje się sama. Pozostałe liczby w Results są wpisane ręcznie z `results/*.json` i `benchmark.csv`.
+- Raport ma już 6 stron (stan bez Conclusions i ataków 3–4) — przy K24 trzeba będzie skracać albo ustalić limit. Najłatwiej skrócić Experimental Setup i tabelę kosztów (np. bez wierszy k = 750).
+- Doszły dwie pozycje do `references.bib`: Goldwasser–Micali (atak 1, symbol Jacobiego) i Bost i in. (NDSS 2015, wstęp).
+- Raport docelowo przenosimy na Overleafa (cały katalog `report/` + `results/figures/` i `results/metrics.tex`), dlatego ścieżki zostały względne jak w szablonie.
+
+**Wyniki, na które się powołujemy**
+- Zbiór testowy: accuracy 0,9807, F1 0,922, ROC-AUC 0,991 — identyczne dla wersji zaszyfrowanej i jawnego NB; zgodność 1035/1035, `exact_int_match` 1035/1035; błąd kwantyzacji maks. 1,35·10⁻⁵, 0 zmian znaku (`results/agreement.json`, `quantization.json`).
+- Czasy zależą od obciążenia laptopa (pełny przebieg 608–668 s w trzech powtórzeniach), metryki nie — dwa przebiegi `run_all` dały identyczne pliki.
+- `results/benchmark.csv` zmierzyłem jeszcze raz na M5 Pro przy wolnym systemie (P21): dla 2048 bit wyszło ok. 15% mniej niż w twoim pomiarze (3,96 s zamiast 4,65 s na wiadomość przy k = 1000), 1024 i 3072 prawie bez zmian. Liczby w Results, README i slajdach są już z nowego pomiaru.
+
+**Slajdy (P24)**
+- `slides/main.tex` (Beamer, po polsku, 12 slajdów): problem i threat model, Paillier i NB, protokół, metodyka, wyniki, zgodność, koszt, ataki 1–4, wnioski. Slajd o atakach 3–4 opisuje atak 4 jakościowo — po K21 warto dopisać liczbę z prawdziwych danych.
+- Do K25: obrona jest indywidualna, więc każdy powinien umieć opowiedzieć cały protokół i odpowiedzieć na pytania z Threat Modelu (dlaczego CPA, co daje IND-CPA, czemu pełny wektor i kodowanie całkowite, co wie klient o modelu).
