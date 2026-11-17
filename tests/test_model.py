@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 
 from src.config import RESULTS_DIR
 from src.data import RAW_FILE, load_split
-from src.model import build_pipeline, features, fit_model, log_odds_weights
+from src.model import build_pipeline, features, fit_best_model, fit_model, log_odds_weights
 
 # Mała siatka, żeby test trwał ułamek sekundy; pełna siatka jest w `PARAM_GRID`.
 SMALL_GRID = {"select__k": [6, 12], "nb__alpha": [0.1, 1.0]}
@@ -119,3 +119,23 @@ def test_real_test_set_predictions_match_model():
 
     assert X_test.shape == (len(texts_test), best["select__k"])
     assert ((b + X_test @ w > 0).astype(int) == model.predict(texts_test)).all()
+
+
+def test_fit_best_model_reproduces_fit_model(tmp_path, train_data):
+    texts, y = train_data
+    grid = {**SMALL_GRID, "tfidf__ngram_range": [(1, 1)]}
+
+    tuned = fit_model(texts, y, out_dir=tmp_path, param_grid=grid)
+    refitted = fit_best_model(texts, y, tmp_path / "best_params.json")
+
+    assert refitted.get_params()["tfidf__ngram_range"] == (1, 1)
+    assert np.array_equal(features(refitted, texts), features(tuned, texts))
+    assert log_odds_weights(refitted)[0] == log_odds_weights(tuned)[0]
+    assert np.array_equal(log_odds_weights(refitted)[1], log_odds_weights(tuned)[1])
+
+
+def test_fit_best_model_without_params_points_to_tuning(tmp_path, train_data):
+    texts, y = train_data
+
+    with pytest.raises(FileNotFoundError, match="src.model"):
+        fit_best_model(texts, y, tmp_path / "best_params.json")

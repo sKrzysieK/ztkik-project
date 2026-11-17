@@ -105,6 +105,27 @@ def fit_model(
     return search.best_estimator_
 
 
+def best_params(path: Path = RESULTS_DIR / "best_params.json") -> dict:
+    """Wczytuje parametry wybrane w CV (zapisane przez `python -m src.model`)."""
+    if not path.exists():
+        raise FileNotFoundError(f"brak {path}; uruchom najpierw `python -m src.model`")
+    params = json.loads(path.read_text())["params"]
+    # JSON nie ma krotek, a `TfidfVectorizer` wymaga krotki.
+    params["tfidf__ngram_range"] = tuple(params["tfidf__ngram_range"])
+    return params
+
+
+def fit_best_model(
+    texts_train: list[str], y_train: np.ndarray, path: Path = RESULTS_DIR / "best_params.json"
+) -> Pipeline:
+    """Trenuje model z parametrami z CV bez ponownego przeszukiwania siatki.
+
+    Daje ten sam model co `fit_model` (`GridSearchCV` też trenuje najlepszy model na całym
+    zbiorze treningowym), a trwa ułamek sekundy.
+    """
+    return build_pipeline().set_params(**best_params(path)).fit(texts_train, y_train)
+
+
 def features(model: Pipeline, texts: list[str]) -> np.ndarray:
     """Zwraca macierz cech `(n, k)`, dense, `float64`.
 
