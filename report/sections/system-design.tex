@@ -42,7 +42,7 @@ A zero feature is encoded exactly and contributes nothing, so the error of the s
 \begin{equation}
   \left| \frac{\tilde{\Delta}}{S^2} - \Delta \right| \le \frac{1}{2S} \sum_{i:\, x_i \ne 0} \left( |x_i| + |w_i| + \frac{1}{2S} \right) + \frac{1}{2S^2}.
 \end{equation}
-For SMS messages with a dozen non-zero features this is of the order of $10^{-5}$; we measure the actual error against the floating-point classifier in \cref{sec:results}.
+After the $\chi^2$ selection an SMS message has only a few non-zero features (median~3 and at most~24 on our test set for $k = 1000$), so the bound stays below $5 \cdot 10^{-5}$; we measure the actual error against the floating-point classifier in \cref{sec:results}.
 The encoded values are also far from the plaintext limit: $|\tilde{\Delta}| \le S^2 (|b| + \sum_i |w_i|) < 10^{17}$, whereas \texttt{phe} accepts signed values up to $n/3 \approx 2^{2046}$ for a \num{2048}-bit key.
 
 \subsection{Full Feature Vectors}
