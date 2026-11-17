@@ -1,0 +1,15 @@
+{
+  "params": {
+    "nb__alpha": 0.01,
+    "select__k": 1000,
+    "tfidf__ngram_range": [
+      1,
+      1
+    ],
+    "tfidf__sublinear_tf": true
+  },
+  "cv_folds": 5,
+  "refit": "f1",
+  "cv_accuracy": 0.97969,
+  "cv_f1": 0.914662
+}
