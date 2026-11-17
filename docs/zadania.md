@@ -166,7 +166,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Zrobić: odsetek identycznych predykcji enc vs. jawny NB (kryterium: 100%), odsetek `exact_int_match` (kryterium: 100%).
 - [x] **P13 · Błąd kwantyzacji** — zależy od: P10
   - Zrobić: statystyki `|delta_enc − delta_float|` (max, średnia) i liczba wiadomości, dla których kwantyzacja zmieniła znak.
-- [ ] **P14 · Krzywa ROC** — zależy od: P10
+- [x] **P14 · Krzywa ROC** — zależy od: P10
   - Gotowe gdy: `results/figures/roc.pdf`.
 - [ ] **P15 · Wykres accuracy vs. k vs. czas** — zależy od: P05, K13
   - Zrobić: accuracy z `cv_results.csv`, czas na wiadomość z `benchmark.csv`.
