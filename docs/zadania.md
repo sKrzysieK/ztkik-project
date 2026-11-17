@@ -128,7 +128,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Dane i model
 
-- [ ] **P01 · Pobieranie danych** — `data/download.py` — zależy od: K04
+- [x] **P01 · Pobieranie danych** — `data/download.py` — zależy od: K04
   - Zrobić: pobranie SMS Spam Collection z UCI do `data/raw/` (idempotentnie: drugi przebieg nic nie pobiera).
   - Gotowe gdy: `python data/download.py` na czystym klonie daje plik z 5574 wierszami.
 - [ ] **P02 · `load_dataset` z deduplikacją** — `src/data.py` — zależy od: P01
