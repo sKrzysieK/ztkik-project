@@ -162,7 +162,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P11 · Tabela metryk** — zależy od: P07, P10
   - Zrobić: accuracy, F1 (spam), precision, recall, ROC-AUC (z `delta_enc`) dla: wersji zaszyfrowanej, jawnego NB, Dummy.
   - Gotowe gdy: `results/metrics.csv` i ta sama tabela jako `results/metrics.tex` (booktabs) do raportu.
-- [ ] **P12 · Zgodność i dokładność** — zależy od: P10
+- [x] **P12 · Zgodność i dokładność** — zależy od: P10
   - Zrobić: odsetek identycznych predykcji enc vs. jawny NB (kryterium: 100%), odsetek `exact_int_match` (kryterium: 100%).
 - [ ] **P13 · Błąd kwantyzacji** — zależy od: P10
   - Zrobić: statystyki `|delta_enc − delta_float|` (max, średnia) i liczba wiadomości, dla których kwantyzacja zmieniła znak.
