@@ -137,7 +137,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: test: proporcja spamu w train i test różni się o < 1 p.p.; dwa wywołania dają identyczny podział; zbiory rozłączne.
 - [x] **P04 · EDA** — `notebooks/01-eda.ipynb` — zależy od: P02
   - Zrobić: rozkład klas, długości wiadomości, liczba duplikatów przed i po deduplikacji, najczęstsze słowa per klasa.
-- [ ] **P05 · Strojenie modelu** — `fit_model` w `src/model.py` — zależy od: P03
+- [x] **P05 · Strojenie modelu** — `fit_model` w `src/model.py` — zależy od: P03
   - Zrobić: `Pipeline` (TF-IDF → `SelectKBest(chi2)` → `MultinomialNB`) w `GridSearchCV`, 5-fold, **tylko na train**; siatka: `alpha`, k ∈ 500–1000, parametry TF-IDF.
   - Gotowe gdy: zapisane `results/best_params.json` i `results/cv_results.csv` (potrzebne do wykresu accuracy vs. k).
 - [ ] **P06 · Eksport cech i wag** — `features`, `log_odds_weights` — zależy od: P05

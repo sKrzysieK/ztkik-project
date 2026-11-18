@@ -37,7 +37,7 @@ Uwagi projektowe:
 - **Kodowanie stałoprzecinkowe (wariant podstawowy):** `phe` wysyła z każdym `EncryptedNumber` jawny `exponent`. Przy domyślnym kodowaniu floatów zależy on od wartości (zmierzone: `0.0 → -14`, `0.03 → -15`, `0.1–0.7 → -14`, `1.0 → -13`), więc serwer widzi część pozycji niezerowych (dla k=500 w ok. 1,6% wiadomości testowych). Dlatego `x_i` i `w_i` skalujemy do liczb całkowitych (np. ×10⁶, wyraz wolny `b` ×10¹²) — wykładnik jest wtedy zawsze 0. Alternatywa: `pub.encrypt(x, precision=1e-6)` (wykładnik zawsze -5), ale bez dokładnej równości wyników.
 - Na liczbach całkowitych obliczenie homomorficzne jest **dokładne**: odszyfrowane `Δ` musi być równe (`==`) temu samemu obliczeniu na jawnych liczbach całkowitych. Błąd kwantyzacji względem zmiennoprzecinkowego NB mierzymy osobno.
 - Na granicy z `phe` rzutujemy wartości na `int`/`float` Pythona — `np.float32` i `np.int64` dają `TypeError`.
-- **Koszt obliczeń:** `phe` sam korzysta z `gmpy2`, jeśli jest zainstalowane. Zmierzone lokalnie dla klucza 2048 bit: 4,4 ms na szyfrowanie z `gmpy2`, 59,8 ms bez. Zbiór testowy przy k=1000 (~1035 × 1000 szyfrowań) to ok. 76 min na jednym rdzeniu i kilka minut z `multiprocessing`; bez `gmpy2` ok. 17 h. Selekcja cech chi² z k ≈ 500–1000 (k=200 nie spełnia kryterium 94%, patrz sekcja 4), klucz 2048 bit do wyników końcowych i 1024 bit do iteracji. Wybór k uzasadniamy wykresem accuracy vs. k vs. czas.
+- **Koszt obliczeń:** `phe` sam korzysta z `gmpy2`, jeśli jest zainstalowane. Zmierzone lokalnie dla klucza 2048 bit: 4,4 ms na szyfrowanie z `gmpy2`, 59,8 ms bez. Zbiór testowy przy k=1000 (~1035 × 1000 szyfrowań) to ok. 76 min na jednym rdzeniu i kilka minut z `multiprocessing`; bez `gmpy2` ok. 17 h. Selekcja cech chi² z k ≈ 500–1000 (przy k=200 F1 spamu spada do ok. 0.75, patrz sekcja 4), klucz 2048 bit do wyników końcowych i 1024 bit do iteracji. Wybór k uzasadniamy wykresem accuracy vs. k vs. czas.
 
 ## 3. Threat Model (sekcja raportu)
 
@@ -51,7 +51,7 @@ Uwagi projektowe:
 
 - Dane: SMS Spam Collection (UCI), 5574 wiadomości, w tym 403 dokładne duplikaty (5171 unikalnych; 309 ham, głównie szablonowe odpowiedzi, i 94 spam — spam jest duplikowany proporcjonalnie dwa razy częściej). **Deduplikacja przed podziałem** — bez niej ok. 12% wiadomości testowych (22% spamu testowego) występuje dosłownie w zbiorze treningowym, co zawyża wyniki. Podział **stratyfikowany 80/20** (~1035 wiadomości testowych), stały `random_state`, zbiór testowy nietykany do końca.
 - Hiperparametry (`alpha` NB, k cech, parametry TF-IDF) dobierane **5-fold CV wyłącznie na zbiorze treningowym**. TF-IDF i chi² dopasowujemy **wewnątrz** foldów (`Pipeline` w `GridSearchCV`), inaczej CV przecieka.
-- Zakres k: wstępny przebieg (bez strojenia, α=0.1, dane po deduplikacji) dał accuracy 0.927 / 0.975 / 0.982 dla k = 200 / 500 / 1000 — k=200 nie spełnia kryterium, więc szukamy w k ≈ 500–1000.
+- Zakres k: wstępny przebieg (bez strojenia, α=0.1, dane po deduplikacji) dał accuracy 0.927 / 0.975 / 0.982 dla k = 200 / 500 / 1000 — to wyniki na zbiorze testowym, więc do doboru k używamy tylko CV. Po strojeniu (P05, 5-fold CV na train) najlepsze wyniki dla k = 200 / 500 / 1000 to accuracy 0.949 / 0.976 / 0.980 i F1 spamu 0.754 / 0.897 / 0.915: k=200 przekracza 94% accuracy, ale F1 spamu jest dużo niższe, więc zostajemy przy k ≈ 500–1000.
 - Grupy kontrolne:
   1. **Jawny NB** z identycznymi parametrami — bezpośredni punkt odniesienia dla wersji zaszyfrowanej.
   2. **Klasyfikator większościowy** (`DummyClassifier`, ~87%) — pokazuje, że 94% to realny wynik, a nie efekt niezbalansowania.
@@ -109,6 +109,6 @@ Wyniki muszą być odtwarzalne jednym poleceniem (`python -m src.run_all`), ze s
 | Zbyt długie szyfrowanie całego zbioru testowego | `gmpy2` (~13× szybciej), k ≤ 1000, `multiprocessing`, iteracje na kluczu 1024 bit, finalny przebieg raz z cache wyników |
 | Błędy precyzji zmieniają predykcje | Kodowanie stałoprzecinkowe: część kryptograficzna jest dokładna (test `==`); błąd kwantyzacji względem float NB mierzony osobno, w razie potrzeby większy mnożnik |
 | Wyciek przez metadane szyfrogramów (`exponent` w `phe`) | Stały wykładnik dla wszystkich wartości; atak 4 z sekcji 5 to potwierdza |
-| Accuracy < 94% przy małym k | k ≈ 500–1000 (k=200 daje 0.927), krzywa accuracy vs. k, dobór k z CV; NB na SMS zwykle osiąga ~97% |
+| Accuracy < 94% przy małym k | k ≈ 500–1000 (k=200: accuracy 0.949, ale F1 0.754 w CV), krzywa accuracy vs. k, dobór k z CV; NB na SMS zwykle osiąga ~97% |
 | Nierówny wkład w Git | Lista zadań z jednym właścicielem każdego zadania (sekcja 7), regularne małe commity obu osób |
 | Krótki termin (2 tygodnie) | Zadania „(opc.)” (regresja logistyczna, klucz 3072 bit, atak 3) robimy tylko, jeśli zostanie czas; nie blokują zadań obowiązkowych |
