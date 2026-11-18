@@ -135,7 +135,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Gotowe gdy: test: 5171 wierszy, brak duplikatów `text`, `label` ∈ {0, 1}.
 - [x] **P03 · `load_split`** — `src/data.py` — zależy od: P02
   - Gotowe gdy: test: proporcja spamu w train i test różni się o < 1 p.p.; dwa wywołania dają identyczny podział; zbiory rozłączne.
-- [ ] **P04 · EDA** — `notebooks/01-eda.ipynb` — zależy od: P02
+- [x] **P04 · EDA** — `notebooks/01-eda.ipynb` — zależy od: P02
   - Zrobić: rozkład klas, długości wiadomości, liczba duplikatów przed i po deduplikacji, najczęstsze słowa per klasa.
 - [ ] **P05 · Strojenie modelu** — `fit_model` w `src/model.py` — zależy od: P03
   - Zrobić: `Pipeline` (TF-IDF → `SelectKBest(chi2)` → `MultinomialNB`) w `GridSearchCV`, 5-fold, **tylko na train**; siatka: `alpha`, k ∈ 500–1000, parametry TF-IDF.

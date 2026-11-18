@@ -20,13 +20,8 @@ LABELS = {"ham": 0, "spam": 1}
 TEST_SIZE = 0.2
 
 
-def load_dataset(path: Path = RAW_FILE) -> pd.DataFrame:
-    """Zwraca zbiór po deduplikacji: kolumny `label` (1 = spam, 0 = ham) i `text`.
-
-    Usuwamy dokładne duplikaty treści (403 z 5574, głównie szablonowy spam), zostawiając
-    pierwsze wystąpienie. Bez tego część wiadomości testowych byłaby dosłownie w zbiorze
-    treningowym i zawyżała wyniki. Żadna treść nie występuje z dwiema etykietami.
-    """
+def read_raw(path: Path = RAW_FILE) -> pd.DataFrame:
+    """Zwraca surowy zbiór (5574 wiersze, z duplikatami): kolumny `label` (0/1) i `text`."""
     if not path.exists():
         raise FileNotFoundError(f"brak {path}; uruchom najpierw `python data/download.py`")
     # Każdy wiersz to `etykieta<TAB>treść`; cudzysłowy w SMS-ach są zwykłymi znakami.
@@ -44,6 +39,18 @@ def load_dataset(path: Path = RAW_FILE) -> pd.DataFrame:
     if unknown:
         raise ValueError(f"nieznane etykiety w {path}: {sorted(unknown)}")
     df["label"] = df["label"].map(LABELS).astype("int64")
+    return df
+
+
+def load_dataset(path: Path = RAW_FILE) -> pd.DataFrame:
+    """Zwraca zbiór po deduplikacji: kolumny `label` (1 = spam, 0 = ham) i `text`.
+
+    Usuwamy dokładne duplikaty treści (403 z 5574: 309 ham, głównie szablonowe odpowiedzi
+    typu „Sorry, I'll call later”, i 94 spam), zostawiając pierwsze wystąpienie. Bez tego
+    ok. 12% wiadomości testowych byłoby dosłownie w zbiorze treningowym i zawyżało wyniki.
+    Żadna treść nie występuje z dwiema etykietami.
+    """
+    df = read_raw(path)
     return df.drop_duplicates(subset="text", keep="first").reset_index(drop=True)
 
 
