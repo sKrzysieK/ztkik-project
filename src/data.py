@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
-from src.config import DATA_RAW
+from src.config import DATA_RAW, SEED
 
 if TYPE_CHECKING:
     import numpy as np
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 # Plik pobierany przez `python data/download.py`.
 RAW_FILE = DATA_RAW / "SMSSpamCollection"
 LABELS = {"ham": 0, "spam": 1}
+TEST_SIZE = 0.2
 
 
 def load_dataset(path: Path = RAW_FILE) -> pd.DataFrame:
@@ -45,6 +47,18 @@ def load_dataset(path: Path = RAW_FILE) -> pd.DataFrame:
     return df.drop_duplicates(subset="text", keep="first").reset_index(drop=True)
 
 
-def load_split() -> tuple[list[str], list[str], np.ndarray, np.ndarray]:
-    """Zwraca `texts_train, texts_test, y_train, y_test` (stratyfikowany 80/20, stały seed)."""
-    raise NotImplementedError  # P03
+def load_split(path: Path = RAW_FILE) -> tuple[list[str], list[str], np.ndarray, np.ndarray]:
+    """Zwraca `texts_train, texts_test, y_train, y_test` (stratyfikowany 80/20, stały seed).
+
+    Dzielimy po deduplikacji, więc żadna treść nie trafia jednocześnie do obu zbiorów.
+    Stratyfikacja trzyma ten sam odsetek spamu (ok. 12,6%) w obu częściach.
+    """
+    df = load_dataset(path)
+    texts_train, texts_test, y_train, y_test = train_test_split(
+        df["text"].tolist(),
+        df["label"].to_numpy(),
+        test_size=TEST_SIZE,
+        stratify=df["label"],
+        random_state=SEED,
+    )
+    return texts_train, texts_test, y_train, y_test
