@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING
 
+import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
@@ -22,9 +22,6 @@ from sklearn.pipeline import Pipeline
 
 from src.config import RESULTS_DIR, SEED
 from src.data import load_split
-
-if TYPE_CHECKING:
-    import numpy as np
 
 CV_FOLDS = 5
 
@@ -109,13 +106,26 @@ def fit_model(
 
 
 def features(model: Pipeline, texts: list[str]) -> np.ndarray:
-    """Zwraca macierz cech `(n, k)`, dense, `float64`."""
-    raise NotImplementedError  # P06
+    """Zwraca macierz cech `(n, k)`, dense, `float64`.
+
+    To wejście NB: TF-IDF (normalizacja L2, więc wartości z [0, 1]) po selekcji chi².
+    Klient liczy je jawnie i dopiero ten wektor szyfruje.
+    """
+    return model[:-1].transform(texts).toarray().astype(np.float64)
 
 
 def log_odds_weights(model: Pipeline) -> tuple[float, np.ndarray]:
-    """Zwraca `b`, `w` takie, że spam <=> `b + x·w > 0`."""
-    raise NotImplementedError  # P06
+    """Zwraca `b`, `w` takie, że spam <=> `b + x·w > 0`.
+
+    `b = log P(spam) − log P(ham)`, `w_i = log θ_spam,i − log θ_ham,i` (spam − ham, czyli
+    indeks 1 − indeks 0). Przy remisie `MultinomialNB.predict` wybiera ham, tak jak `Δ > 0`.
+    """
+    nb = model.named_steps["nb"]
+    if nb.classes_.tolist() != [0, 1]:
+        raise ValueError(f"oczekiwano klas [0, 1] (ham, spam), a są {nb.classes_.tolist()}")
+    b = float(nb.class_log_prior_[1] - nb.class_log_prior_[0])
+    w = (nb.feature_log_prob_[1] - nb.feature_log_prob_[0]).astype(np.float64)
+    return b, w
 
 
 def main() -> None:
