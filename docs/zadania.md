@@ -131,7 +131,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P01 · Pobieranie danych** — `data/download.py` — zależy od: K04
   - Zrobić: pobranie SMS Spam Collection z UCI do `data/raw/` (idempotentnie: drugi przebieg nic nie pobiera).
   - Gotowe gdy: `python data/download.py` na czystym klonie daje plik z 5574 wierszami.
-- [ ] **P02 · `load_dataset` z deduplikacją** — `src/data.py` — zależy od: P01
+- [x] **P02 · `load_dataset` z deduplikacją** — `src/data.py` — zależy od: P01
   - Gotowe gdy: test: 5171 wierszy, brak duplikatów `text`, `label` ∈ {0, 1}.
 - [ ] **P03 · `load_split`** — `src/data.py` — zależy od: P02
   - Gotowe gdy: test: proporcja spamu w train i test różni się o < 1 p.p.; dwa wywołania dają identyczny podział; zbiory rozłączne.
