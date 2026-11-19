@@ -1,7 +1,13 @@
 import numpy as np
 import pytest
 
-from src.evaluate import METRICS, classification_metrics, metrics_table, save_metrics_table
+from src.evaluate import (
+    METRICS,
+    agreement,
+    classification_metrics,
+    metrics_table,
+    save_metrics_table,
+)
 
 
 def test_classification_metrics_for_spam_class():
@@ -82,3 +88,27 @@ def test_save_metrics_table_writes_csv_and_booktabs(cache, tmp_path):
     assert r"\toprule" in tex and r"\midrule" in tex and r"\bottomrule" in tex
     assert r"Encrypted NB (Paillier) & 0.800 & 0.667 & 1.000 & 0.800 & 1.000 \\" in tex
     assert r"Majority class & 0.600 & 0.000 & 0.000 & 0.000 & 0.500 \\" in tex
+
+
+def test_agreement_counts_different_predictions(cache):
+    result = agreement(cache / "scores.npz", cache / "baselines.npz")
+
+    assert result == {
+        "n_messages": 5,
+        "same_prediction": 0.8,
+        "n_different_prediction": 1,
+        "exact_int_match": 1.0,
+        "n_int_mismatch": 0,
+    }
+
+
+def test_agreement_reports_int_mismatch(cache):
+    with np.load(cache / "scores.npz") as scores:
+        arrays = dict(scores)
+    arrays["exact_int_match"] = np.array([True, True, False, True, True])
+    np.savez(cache / "scores.npz", **arrays)
+
+    result = agreement(cache / "scores.npz", cache / "baselines.npz")
+
+    assert result["exact_int_match"] == pytest.approx(0.8)
+    assert result["n_int_mismatch"] == 1
