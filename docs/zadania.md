@@ -183,7 +183,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Odtwarzalność
 
-- [ ] **P18 · Jedno polecenie** — zależy od: P11–P17, K13
+- [x] **P18 · Jedno polecenie** — zależy od: P11–P17, K13
   - Zrobić: `python -m src.run_all` (pipeline → evaluate → ataki 1–2 i 3, jeśli jest → wykresy). Dwa przebiegi dają identyczne metryki (szyfrogramy różne, wyniki te same).
 - [ ] **P19 · README** — zależy od: P18
   - Zrobić: instalacja, pobranie danych, uruchomienie, wyniki w skrócie, uwaga, że szyfrogramy celowo nie są odtwarzalne (`phe` losuje `r` z `SystemRandom`).
