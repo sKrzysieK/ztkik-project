@@ -1,0 +1,24 @@
+{
+  "n_messages": 400,
+  "n_spam": 50,
+  "k": 1000,
+  "key_bits": 2048,
+  "ciphertext_rf": {
+    "mean_accuracy": 0.875,
+    "std_accuracy": 0.0,
+    "mean_f1": 0.0,
+    "std_f1": 0.0
+  },
+  "plaintext_rf": {
+    "mean_accuracy": 0.975,
+    "std_accuracy": 0.0158,
+    "mean_f1": 0.8868,
+    "std_f1": 0.0796
+  },
+  "dummy": {
+    "mean_accuracy": 0.875,
+    "std_accuracy": 0.0,
+    "mean_f1": 0.0,
+    "std_f1": 0.0
+  }
+}
