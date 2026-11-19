@@ -127,6 +127,26 @@ def agreement(
     }
 
 
+def quantization_error(scores_path: Path = SCORES_FILE) -> dict[str, float | int]:
+    """Zwraca błąd kodowania stałoprzecinkowego: `|delta_enc − delta_float|` na wiadomość.
+
+    `delta_float` to jawny NB w `float64` bez zaokrągleń, więc różnica to wyłącznie efekt
+    zaokrąglenia `x`, `w`, `b` do wielokrotności `1/SCALE`. `sign_flips` liczy wiadomości,
+    dla których kwantyzacja zmieniła klasę; `min_margin` (najmniejsze `|delta_float|`)
+    pokazuje, jak daleko od takiej zmiany jesteśmy.
+    """
+    with np.load(scores_path) as scores:
+        delta_enc, delta_float = scores["delta_enc"], scores["delta_float"]
+    error = np.abs(delta_enc - delta_float)
+    return {
+        "n_messages": int(len(error)),
+        "max_abs_error": float(error.max()),
+        "mean_abs_error": float(error.mean()),
+        "sign_flips": int(((delta_enc > 0) != (delta_float > 0)).sum()),
+        "min_margin": float(np.abs(delta_float).min()),
+    }
+
+
 def save_json(result: dict, path: Path) -> None:
     """Zapisuje mały wynik jako JSON (commitujemy go, raport cytuje liczby stąd)."""
     path.write_text(json.dumps(result, indent=2) + "\n")
@@ -144,6 +164,14 @@ def main() -> None:
         f"\nzgodność z jawnym NB: {agree['same_prediction']:.2%} "
         f"({agree['n_different_prediction']} różnych z {agree['n_messages']}), "
         f"exact_int_match: {agree['exact_int_match']:.2%}"
+    )
+
+    quant = quantization_error()
+    save_json(quant, RESULTS_DIR / "quantization.json")
+    print(
+        f"błąd kwantyzacji |Δ_enc − Δ_float|: max {quant['max_abs_error']:.2e}, "
+        f"średnio {quant['mean_abs_error']:.2e}; zmiany znaku: {quant['sign_flips']} "
+        f"(najmniejsze |Δ| = {quant['min_margin']:.3f})"
     )
 
 

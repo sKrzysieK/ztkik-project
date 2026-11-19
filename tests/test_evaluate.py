@@ -6,6 +6,7 @@ from src.evaluate import (
     agreement,
     classification_metrics,
     metrics_table,
+    quantization_error,
     save_metrics_table,
 )
 
@@ -112,3 +113,28 @@ def test_agreement_reports_int_mismatch(cache):
 
     assert result["exact_int_match"] == pytest.approx(0.8)
     assert result["n_int_mismatch"] == 1
+
+
+def test_quantization_error_statistics(tmp_path):
+    # Druga wiadomość leży tuż przy granicy i kwantyzacja zmienia jej znak.
+    np.savez(
+        tmp_path / "scores.npz",
+        delta_enc=np.array([1.000004, 0.000001, -2.0]),
+        delta_float=np.array([1.0, -0.000001, -2.0]),
+    )
+
+    result = quantization_error(tmp_path / "scores.npz")
+
+    assert result["n_messages"] == 3
+    assert result["max_abs_error"] == pytest.approx(4e-6)
+    assert result["mean_abs_error"] == pytest.approx(2e-6)
+    assert result["sign_flips"] == 1
+    assert result["min_margin"] == pytest.approx(1e-6)
+
+
+def test_quantization_error_reads_pipeline_cache(cache):
+    result = quantization_error(cache / "scores.npz")
+
+    # W `cache` wersje różnią się tylko ostatnią wiadomością: 0.2 vs −0.2.
+    assert result["max_abs_error"] == pytest.approx(0.4)
+    assert result["sign_flips"] == 1
