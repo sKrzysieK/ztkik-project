@@ -168,7 +168,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Zrobić: statystyki `|delta_enc − delta_float|` (max, średnia) i liczba wiadomości, dla których kwantyzacja zmieniła znak.
 - [x] **P14 · Krzywa ROC** — zależy od: P10
   - Gotowe gdy: `results/figures/roc.pdf`.
-- [ ] **P15 · Wykres accuracy vs. k vs. czas** — zależy od: P05, K13
+- [x] **P15 · Wykres accuracy vs. k vs. czas** — zależy od: P05, K13
   - Zrobić: accuracy z `cv_results.csv`, czas na wiadomość z `benchmark.csv`.
   - Gotowe gdy: `results/figures/accuracy-vs-k.pdf`.
 
