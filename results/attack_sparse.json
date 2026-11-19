@@ -1,0 +1,26 @@
+{
+  "n_test": 1035,
+  "k": 1000,
+  "median_nonzero": 3.0,
+  "presence_bnb": {
+    "accuracy": 0.9836,
+    "precision": 0.9914,
+    "recall": 0.8779,
+    "f1": 0.9312,
+    "roc_auc": 0.9962
+  },
+  "count_logreg": {
+    "accuracy": 0.943,
+    "precision": 0.86,
+    "recall": 0.6565,
+    "f1": 0.7446,
+    "roc_auc": 0.9391
+  },
+  "plain_nb": {
+    "accuracy": 0.9807,
+    "precision": 0.944,
+    "recall": 0.9008,
+    "f1": 0.9219,
+    "roc_auc": 0.9911
+  }
+}

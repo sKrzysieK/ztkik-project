@@ -177,7 +177,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P16 · Atak 1: klasyfikator na szyfrogramach (CPA)** — `src/attacks/ciphertext_classifier.py` — zależy od: K08, P06
   - Zrobić: „serwer” szyfruje kluczem publicznym oznaczone wiadomości (wystarczy kilkaset, dla czasu), cechy z szyfrogramów (np. najmłodsze bajty, reszty modulo małe liczby), Random Forest z CV.
   - Gotowe gdy: wynik (accuracy, F1) porównany z Dummy; oczekiwany ≈ Dummy.
-- [ ] **P17 · Atak 2: wyciek przy wektorze rzadkim** — `src/attacks/sparse_leak.py` — zależy od: P06
+- [x] **P17 · Atak 2: wyciek przy wektorze rzadkim** — `src/attacks/sparse_leak.py` — zależy od: P06
   - Zrobić: serwer widzi tylko indeksy niezerowych pozycji → klasyfikator na binarnym wektorze obecności słów.
   - Gotowe gdy: wynik porównany z jawnym NB; oczekiwany zbliżony do jawnego modelu.
 
