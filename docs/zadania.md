@@ -195,7 +195,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **P21 · Sekcja VI. Results** — `sections/results.tex` — zależy od: P11–P15
   - Zrobić: tabela metryk, zgodność, błąd kwantyzacji, wydajność (tabela z `benchmark.csv`, wykres accuracy vs. k).
 - [x] **P22 · Sekcja VII. Security Analysis — ataki 1–2** — `sections/security.tex` (podsekcje 1–2) — zależy od: P16, P17
-- [ ] **P23 · Abstract, Index Terms, I. Introduction** — zależy od: P21, K18–K20
+- [x] **P23 · Abstract, Index Terms, I. Introduction** — zależy od: P21, K18–K20
 - [ ] **P24 · Slajdy na obronę** — zależy od: P21, P22, K20
 
 ---
