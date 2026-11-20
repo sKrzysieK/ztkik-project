@@ -190,7 +190,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ### Raport
 
-- [ ] **P20 · Sekcja V. Experimental Setup** — `sections/setup.tex` — zależy od: K17, P05, P07
+- [x] **P20 · Sekcja V. Experimental Setup** — `sections/setup.tex` — zależy od: K17, P05, P07
   - Zrobić: dane i deduplikacja, podział, CV, siatka hiperparametrów, grupy kontrolne, sprzęt i klucze.
 - [ ] **P21 · Sekcja VI. Results** — `sections/results.tex` — zależy od: P11–P15
   - Zrobić: tabela metryk, zgodność, błąd kwantyzacji, wydajność (tabela z `benchmark.csv`, wykres accuracy vs. k).
