@@ -1,4 +1,52 @@
 % P22 (ataki 1--2), K22 (ataki 3--4)
 \section{Security Analysis}\label{sec:security}
 
-TODO
+We test the threat model of \cref{sec:threat-model} empirically.
+Each attack trains a classifier on the information available to the honest-but-curious server and succeeds if it predicts spam better than the majority-class baseline.
+Since the server holds the public key and knows the feature extraction, it can prepare labelled examples itself by encrypting messages of its choice (CPA); we let it use the training set for this and never the test set.
+
+\subsection{Attack 1: Classifier on Ciphertexts}\label{sec:attack-ciphertext}
+
+The server encrypts \num{400} labelled training messages (\num{50} spam, stratified sample) with the client's \num{2048}-bit public key, exactly as the client would, and tries to learn spam from the ciphertexts.
+From each of the $k = 1000$ ciphertexts $c$ of a message it extracts six features that could reveal structure of the plaintext: the least significant byte, $c \bmod 3$, $c \bmod 5$, $c \bmod 7$, the number of leading zero bits relative to $n^2$, and the Jacobi symbol $\left(\frac{c}{n}\right)$.
+The last one breaks the Goldwasser--Micali cryptosystem~\cite{goldwasser1984}, but here $\left(\frac{c}{n}\right) = \left(\frac{r}{n}\right)$, because $(1 + n)^m \equiv 1 \pmod{n}$; it depends only on the random $r$.
+A random forest with balanced class weights is trained on the resulting \num{6000} features and evaluated with stratified 5-fold cross-validation.
+
+As a positive control, the same random forest is trained on the plaintext features of the same \num{400} messages.
+It reaches an accuracy of $0.975 \pm 0.016$ and an F1 score of $0.887 \pm 0.080$, so the sample is large enough to learn spam if the ciphertexts carried any information about it.
+On the ciphertexts, the forest predicts ham for every message: its accuracy of $0.875$ and F1 of $0$ are exactly those of the majority-class baseline (\cref{tab:attacks}).
+The attack fails, as IND-CPA predicts.
+
+\subsection{Attack 2: Sparse Feature Vectors}\label{sec:attack-sparse}
+
+A tempting optimization is to encrypt and send only the non-zero features together with their indices.
+After the $\chi^2$ selection a message has a median of only 3 non-zero features out of \num{1000}, so this would cut the client's cost and the bandwidth by more than two orders of magnitude.
+The values would remain encrypted, but the server would learn \emph{which} vocabulary words occur in every message.
+
+To measure what this reveals, we give the server the binary vector of non-zero positions.
+No decryption is needed: the server sees these positions in plaintext.
+A Bernoulli naive Bayes model with default parameters, trained on the presence vectors of the training set, classifies the test set with an accuracy of \SI{98.4}{\percent} and F1 of $0.931$, as well as the plaintext model itself (\cref{tab:attacks}).
+Even if the indices were hidden and only the number of ciphertexts per message were visible, a logistic regression on this single number reaches \SI{94.3}{\percent}, well above the \SI{87.3}{\percent} of the majority class, because the $\chi^2$ selection favours spam-indicative words, so spam messages contain more of them.
+Hence the client must encrypt and send all $k$ features, including the zeros (\cref{sec:system-design}); the protocol then reveals nothing beyond the fixed length $k$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Attacks 1 and 2. Attack~1: stratified 5-fold cross-validation on 400 training messages; attack~2: trained on the training set and evaluated on the test set. F1 refers to the spam class.}
+  \label{tab:attacks}
+  \begin{tabular}{@{}llcc@{}}
+    \toprule
+    & Information used by the server & Acc. & F1 \\
+    \midrule
+    1 & Ciphertexts (random forest) & 0.875 & 0.000 \\
+      & Majority class & 0.875 & 0.000 \\
+      & Plaintext features (control) & 0.975 & 0.887 \\
+    \midrule
+    2 & Non-zero positions (Bernoulli NB) & 0.984 & 0.931 \\
+      & Number of non-zero positions & 0.943 & 0.745 \\
+      & Plaintext NB (reference) & 0.981 & 0.922 \\
+      & Majority class & 0.873 & 0.000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% K22: podsekcje dla ataków 3 (niedeterminizm) i 4 (wykładnik).
