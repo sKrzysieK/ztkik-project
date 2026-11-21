@@ -1,0 +1,5 @@
+k,encoding,n_messages,n_nonzero,messages_leaking,nonzero_revealed
+500,float,1035,3471,0.004831,0.001729
+500,fixed,1035,3471,0.0,0.0
+1000,float,1035,5087,0.006763,0.001573
+1000,fixed,1035,5087,0.0,0.0
