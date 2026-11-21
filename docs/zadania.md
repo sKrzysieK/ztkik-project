@@ -202,7 +202,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 
 ## Runda 3 — Krzysztof (atak 4 na danych, domknięcie raportu)
 
-- [ ] **K21 · Atak 4 na prawdziwych danych** — zależy od: K16, P06
+- [x] **K21 · Atak 4 na prawdziwych danych** — zależy od: K16, P06
   - Zrobić: `exponent_leak` na `X_test` dla k = 500 i k = najlepsze z CV, oba kodowania; dopisać atak do `src.run_all`.
   - Gotowe gdy: `results/exponent_leak.csv`; dla `"float"` wyciek > 0 (spodziewane ok. 1,6% wiadomości przy k=500), dla `"fixed"` 0. Po merge'u **zamrożenie kodu**: tag `v1.0-kod`, dalej zmieniamy tylko raport.
 - [ ] **K22 · Sekcja VII. Security Analysis — ataki 3–4** — `sections/security.tex` (podsekcje 3–4) — zależy od: K21, P22, K15 (jeśli zrobione)

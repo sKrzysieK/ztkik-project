@@ -53,7 +53,7 @@ Poszczególne kroki (każdy czyta wyniki poprzednich z `results/`):
 | `python -m src.attacks.ciphertext_classifier` | atak 1: `results/attack_ciphertext.json` |
 | `python -m src.attacks.sparse_leak` | atak 2: `results/attack_sparse.json` |
 | `python -m src.attacks.nondeterminism` | atak 3 (w `run_all` zapis do `results/attack_nondeterminism.json`) |
-| `python -m src.attacks.exponent_leak` | atak 4 (wypisuje wynik) |
+| `python -m src.attacks.exponent_leak` | atak 4: `results/exponent_leak.csv` |
 | `python -m src.plots` | `results/figures/roc.pdf`, `accuracy-vs-k.pdf` |
 | `python -m src.benchmark …` | koszt na wiadomość: `results/benchmark.csv` (polecenia w docstringu) |
 
@@ -88,7 +88,9 @@ Zbiór testowy: 1035 wiadomości (131 spam), k = 1000 cech, klucz 2048 bit.
   cały zbiór testowy ok. 10 min na 15 rdzeniach. Wiadomość to 512 kB szyfrogramów.
 - **Ataki:** klasyfikator na szyfrogramach (atak 1) nie jest lepszy od klasy
   większościowej. Gdyby klient wysyłał tylko niezerowe pozycje, same ich indeksy
-  dawałyby serwerowi 98,4% accuracy (atak 2) — dlatego szyfrujemy pełny wektor.
+  dawałyby serwerowi 98,4% accuracy (atak 2) — dlatego szyfrujemy pełny wektor. Przy
+  kodowaniu floatów w `phe` jawny wykładnik zdradzałby niezerowe pozycje w 0,68% wiadomości
+  (atak 4, k = 1000); przy kodowaniu stałoprzecinkowym wykładnik nie zdradza nic.
 
 ## Odtwarzalność
 
