@@ -2,7 +2,8 @@
 \section{Security Analysis}\label{sec:security}
 
 We test the threat model of \cref{sec:threat-model} empirically.
-Each attack trains a classifier on the information available to the honest-but-curious server and succeeds if it predicts spam better than the majority-class baseline.
+Attacks 1 and 2 train a classifier on the information available to the honest-but-curious server and succeed if it predicts spam better than the majority-class baseline.
+Attacks 3 and 4 show which design decisions keep the server from reading the features directly: probabilistic encryption and the fixed-point encoding.
 Since the server holds the public key and knows the feature extraction, it can prepare labelled examples itself by encrypting messages of its choice (CPA); we let it use the training set for this and never the test set.
 
 \subsection{Attack 1: Classifier on Ciphertexts}\label{sec:attack-ciphertext}
@@ -49,4 +50,27 @@ Hence the client must encrypt and send all $k$ features, including the zeros (\c
   \end{tabular}
 \end{table}
 
-% K22: podsekcje dla ataków 3 (niedeterminizm) i 4 (wykładnik).
+\subsection{Attack 3: Deterministic Encryption}\label{sec:attack-nondeterminism}
+
+IND-CPA requires probabilistic encryption: every ciphertext $c = (1 + n)^m r^n \bmod n^2$ uses a fresh random $r$, which \texttt{phe} draws from the operating system's secure random number generator.
+To show why this matters, we simulate an implementation error that reuses one secret $r$ for all ciphertexts.
+The client encrypts the same \num{6000} values (30 synthetic sparse feature vectors with $k = 200$ and \num{451} distinct values) with a \num{2048}-bit key in both variants.
+
+With a fixed $r$, equal values give equal ciphertexts, so the server sees exactly \num{451} distinct ciphertexts and the full frequency distribution of the features.
+The damage goes beyond frequency analysis.
+Feature vectors are sparse, so the most frequent ciphertext is $\mathrm{Enc}(0) = r^n \bmod n^2$, and for every other ciphertext $c \cdot \mathrm{Enc}(0)^{-1} \equiv 1 + nm \pmod{n^2}$.
+The server thus reads every value $m$ without the private key and recovers \SI{100}{\percent} of them.
+With a fresh $r$ for each ciphertext, all \num{6000} ciphertexts are distinct, and the same procedure recovers no value other than the one it guessed as $\mathrm{Enc}(0)$.
+
+\subsection{Attack 4: Leakage through the Exponent}\label{sec:attack-exponent}
+
+For a float, \texttt{phe} stores an integer mantissa together with a base-16 exponent derived from the magnitude of the value and attaches the exponent to the ciphertext in plaintext (\cref{sec:background}).
+Zero and all values in $[1/16, 1)$ get the same exponent, whereas smaller values and $1.0$ get different ones.
+Because the encoding is deterministic and public, the server can compute the exponent of zero itself and flag every position with a different exponent as a word that occurs in the message, without any false positives.
+We compute the exponents that the server would see for all test messages, for $k = 500$ and for $k = 1000$ selected by cross-validation.
+
+With the floating-point encoding, the server identifies at least one occurring word in 5 test messages (\SI{0.48}{\percent}) for $k = 500$ and in 7 (\SI{0.68}{\percent}) for $k = 1000$, revealing 6 of \num{3471} and 8 of \num{5087} non-zero features, respectively.
+The leak is small only because the sublinear, L2-normalized TF-IDF values of short messages fall almost entirely into $[1/16, 1)$: only values below $1/16$ (the smallest is $0.052$) and the two features equal to $1.0$, from messages with a single distinct word, are revealed.
+It depends on the data rather than on the cryptosystem: on our denser synthetic vectors, the same attack finds occurring words in over \SI{90}{\percent} of messages.
+With the fixed-point encoding, every exponent is~0 and nothing leaks for either $k$.
+The exponent is outside the ciphertext, so the IND-CPA guarantee of Paillier does not cover it, and the encoding has to be part of the protocol design (\cref{sec:fixed-point}).
