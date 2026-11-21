@@ -29,7 +29,7 @@ For $m_1, m_2 \in \mathbb{Z}_n$ and a plaintext constant $k$,
   \mathrm{Enc}(m)^{k} \bmod n^2 &= \mathrm{Enc}(k m \bmod n). \label{eq:hom-mul}
 \end{align}
 Hence a party holding only the public key can compute any linear function of encrypted values with plaintext coefficients.
-Multiplying two ciphertexts with each other is not possible, which is why the scheme is called \emph{partially} homomorphic.
+Multiplying two encrypted values with each other is not possible, which is why the scheme is called \emph{partially} homomorphic.
 
 \textit{Signed values.}
 Plaintexts live in $\mathbb{Z}_n$, so \texttt{phe} represents a signed integer $m$ with $|m| < n/3$ as $m \bmod n$; values above $2n/3$ decode as negative.

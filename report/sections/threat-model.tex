@@ -35,4 +35,4 @@ The encrypted classifier is successful if:
   \item it predicts the same label as the plaintext classifier for \SI{100}{\percent} of test messages;
   \item the decrypted score is exactly equal to the score computed on the same fixed-point integers in plaintext.
 \end{enumerate}
-The attacks in \cref{sec:security} succeed if a classifier trained on information available to the server predicts spam better than the majority-class baseline.
+The classification attacks in \cref{sec:security} succeed if a classifier trained on information available to the server predicts spam better than the majority-class baseline; the remaining attacks succeed if the server reads any feature without the private key.

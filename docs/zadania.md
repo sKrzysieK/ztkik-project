@@ -208,7 +208,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
 - [x] **K22 · Sekcja VII. Security Analysis — ataki 3–4** — `sections/security.tex` (podsekcje 3–4) — zależy od: K21, P22, K15 (jeśli zrobione)
 - [x] **K23 · Sekcja VIII. Conclusions** — zależy od: P21, P22, K22
   - Zrobić: czy kryteria z Threat Modelu spełnione (accuracy > 94%, zgodność 100%, `==`), koszt, ograniczenia (jawny model, pasywny serwer).
-- [ ] **K24 · Korekta całości** — zależy od: K23, P23
+- [x] **K24 · Korekta całości** — zależy od: K23, P23
   - Gotowe gdy: PDF w limicie stron (domyślnie 6), brak `??` i ostrzeżeń o brakujących cytowaniach, wszystkie wykresy czytelne w dwóch kolumnach.
 - [ ] **K25 · Próba obrony** — zależy od: P24, K24
   - Zrobić: każdy tłumaczy kod drugiej osoby i odpowiada na pytania z Threat Modelu.

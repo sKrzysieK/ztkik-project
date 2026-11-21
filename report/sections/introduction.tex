@@ -15,8 +15,8 @@ Our contributions are:
 \begin{itemize}
   \item a protocol in which the server computes the naive Bayes log-odds on Paillier-encrypted TF-IDF features and returns one ciphertext per message, with a fixed-point encoding that makes the encrypted computation exact and hides which features are non-zero (\cref{sec:system-design});
   \item an evaluation on the SMS Spam Collection~\cite{smsspam} with duplicates removed, showing that the encrypted classifier reaches the same quality as its plaintext counterpart, \SI{98.07}{\percent} accuracy, with identical predictions and bit-exact scores (\cref{sec:setup,sec:results});
-  \item a cost analysis for key lengths from \num{1024} to \num{3072} bits and $100$ to $1000$ features, which motivates the number of features (\cref{sec:results});
-  \item an empirical security analysis against an honest-but-curious server that can encrypt chosen messages, which shows that a classifier on ciphertexts does not beat the majority-class baseline, while encrypting only the non-zero features would leak almost as much as the plaintext (\cref{sec:threat-model,sec:security}).
+  \item a cost analysis for key lengths from \num{1024} to \num{3072} bits and $500$ to $1000$ features, which together with the accuracy for $100$ to $1000$ features motivates the number of features (\cref{sec:results});
+  \item an empirical security analysis against an honest-but-curious server that can encrypt chosen messages, which shows that a classifier on ciphertexts does not beat the majority-class baseline, while encrypting only the non-zero features would leak almost as much as the plaintext, and reusing the encryption randomness or the floating-point encoding of \texttt{phe} would let the server read features directly (\cref{sec:threat-model,sec:security}).
 \end{itemize}
 
 The implementation uses the \texttt{phe} library~\cite{phe} and scikit-learn, and all results can be reproduced with a single command.
