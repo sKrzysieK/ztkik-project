@@ -1,12 +1,12 @@
 """Odtworzenie wszystkich wyników jednym poleceniem.
 
 Kolejność: (strojenie modelu) → przebieg zaszyfrowany → grupy kontrolne → metryki,
-zgodność i błąd kwantyzacji → ataki 1–3 → wykresy. Każdy krok zapisuje swój wynik do
+zgodność i błąd kwantyzacji → ataki 1–4 → wykresy. Każdy krok zapisuje swój wynik do
 `results/`, więc kolejne kroki czytają z plików i można je też uruchamiać osobno.
 
 Szyfrogramy celowo nie są odtwarzalne (`phe` losuje `r` z `SystemRandom`), ale wyniki są:
-dwa przebiegi dają identyczne `metrics.csv`, `agreement.json`, `quantization.json` i
-`attack_sparse.json`. Różnią się tylko zmierzone czasy (`pipeline_run.json`).
+dwa przebiegi dają identyczne `metrics.csv`, `agreement.json`, `quantization.json`,
+`attack_sparse.json` i `exponent_leak.csv`. Różnią się tylko zmierzone czasy (`pipeline_run.json`).
 
 Uruchomienie (pełny przebieg ok. 15 min na 15 rdzeniach, klucz 2048 bit):
 - `python -m src.run_all`
@@ -23,7 +23,7 @@ import time
 from collections.abc import Callable
 
 from src import evaluate, plots
-from src.attacks import ciphertext_classifier, nondeterminism, sparse_leak
+from src.attacks import ciphertext_classifier, exponent_leak, nondeterminism, sparse_leak
 from src.baselines import baseline_predictions, fit_logreg, save_baselines
 from src.config import KEY_BITS, RESULTS_DIR
 from src.data import load_split
@@ -69,11 +69,12 @@ def evaluation() -> None:
 
 
 def attacks(key_bits: int, workers: int | None) -> None:
-    """Ataki 1–3; atak 4 (wykładnik) dopisuje K21."""
+    """Ataki 1–4; atak 4 nie szyfruje, więc nie zależy od `key_bits` i `workers`."""
     ciphertext_classifier.save_result(ciphertext_classifier.run(key_bits=key_bits, workers=workers))
     sparse_leak.save_result(sparse_leak.run())
     result = nondeterminism.run(key_bits=key_bits, workers=workers)
     NONDETERMINISM_FILE.write_text(json.dumps(result, indent=2) + "\n")
+    exponent_leak.save_result(exponent_leak.run())
 
 
 def figures() -> None:
