@@ -214,6 +214,7 @@
   \textbf{Atak 4 --- wykładnik \texttt{phe}:}
   \begin{itemize}
     \item przy kodowaniu float wykładnik zależy od rzędu wielkości wartości $\Rightarrow$ zdradza niezerowe pozycje (jak atak 2);
+    \item zbiór testowy: słowa odczytane w 0,68\% wiadomości ($k = 1000$) --- wartości TF-IDF prawie zawsze w $[1/16, 1)$, jak zero; dane syntetyczne: $> 90\%$;
     \item kodowanie stałoprzecinkowe: wykładnik zawsze $0$ $\Rightarrow$ \alert{brak wycieku}.
   \end{itemize}
 \end{frame}
