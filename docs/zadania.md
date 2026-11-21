@@ -206,7 +206,7 @@ Zasady na granicy z `phe`: do `encrypt` / mnożenia trafiają wyłącznie Python
   - Zrobić: `exponent_leak` na `X_test` dla k = 500 i k = najlepsze z CV, oba kodowania; dopisać atak do `src.run_all`.
   - Gotowe gdy: `results/exponent_leak.csv`; dla `"float"` wyciek > 0 (spodziewane ok. 1,6% wiadomości przy k=500), dla `"fixed"` 0. Po merge'u **zamrożenie kodu**: tag `v1.0-kod`, dalej zmieniamy tylko raport.
 - [x] **K22 · Sekcja VII. Security Analysis — ataki 3–4** — `sections/security.tex` (podsekcje 3–4) — zależy od: K21, P22, K15 (jeśli zrobione)
-- [ ] **K23 · Sekcja VIII. Conclusions** — zależy od: P21, P22, K22
+- [x] **K23 · Sekcja VIII. Conclusions** — zależy od: P21, P22, K22
   - Zrobić: czy kryteria z Threat Modelu spełnione (accuracy > 94%, zgodność 100%, `==`), koszt, ograniczenia (jawny model, pasywny serwer).
 - [ ] **K24 · Korekta całości** — zależy od: K23, P23
   - Gotowe gdy: PDF w limicie stron (domyślnie 6), brak `??` i ostrzeżeń o brakujących cytowaniach, wszystkie wykresy czytelne w dwóch kolumnach.
