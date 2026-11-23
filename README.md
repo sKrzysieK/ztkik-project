@@ -5,8 +5,8 @@ liczy na szyfrogramach wynik Naive Bayesa `Δ = b + x·w` i odsyła go zaszyfrow
 klient po odszyfrowaniu zna klasę (spam ⇔ `Δ > 0`). Serwer nie widzi treści wiadomości
 ani wyniku, klient nie dostaje modelu.
 
-Autorzy: Krzysztof Śliwiński, Piotr Waluszek. Szczegóły: [`docs/plan-implementacji.md`](docs/plan-implementacji.md),
-lista zadań: [`docs/zadania.md`](docs/zadania.md), raport: [`report/`](report/).
+Autorzy: Krzysztof Śliwiński, Piotr Waluszek. Sprawozdanie i prezentacja powstają osobno
+w Overleafie i nie są częścią repozytorium.
 
 ## Instalacja
 
@@ -66,9 +66,6 @@ danych nie pobrano):
 .venv/bin/python -m pytest
 ```
 
-Raport: `cd report && latexmk main.tex` (IEEEtran; wykresy bierze z `results/figures/`).
-Slajdy na obronę: `cd slides && latexmk main.tex` (Beamer, te same wykresy i tabela metryk).
-
 ## Wyniki w skrócie
 
 Zbiór testowy: 1035 wiadomości (131 spam), k = 1000 cech, klucz 2048 bit.
@@ -117,11 +114,9 @@ src/crypto_server.py    iloczyn skalarny na szyfrogramach
 src/pipeline.py         przebieg end-to-end
 src/baselines.py        grupy kontrolne
 src/evaluate.py         metryki, zgodność, błąd kwantyzacji
-src/plots.py            wykresy do raportu
+src/plots.py            wykresy (ROC, accuracy vs. k)
 src/benchmark.py        pomiar kosztu
 src/attacks/            ataki 1–4
 src/run_all.py          wszystko jednym poleceniem
 notebooks/01-eda.ipynb  analiza danych
-report/                 raport (IEEEtran)
-slides/                 slajdy na obronę (Beamer)
 ```
